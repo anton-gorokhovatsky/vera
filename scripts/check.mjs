@@ -30,10 +30,13 @@ async function inspect(directory) {
     check(/<main[\s>]/.test(html), `${name}: missing main landmark`);
     check(/<title>[^<]+<\/title>/.test(html), `${name}: missing title`);
     check(/<meta name="robots" content="noindex, nofollow">/.test(html), `${name}: preview must remain noindex until launch`);
-    check(!/<(?:script|iframe|form)\b/i.test(html), `${name}: unexpected runtime, embed or data collection`);
+    check(!/<(?:iframe|form)\b/i.test(html), `${name}: unexpected embed or data collection`);
+    for (const match of html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)) {
+      check(/^<script src="\.\/motion\.js\?v=[\w-]+" defer><\/script>$/.test(match[0]), `${name}: only the local motion control is allowed`);
+    }
     check(!/lorem ipsum|TODO|TBD|example\.com|ваш текст/i.test(html), `${name}: unfinished content`);
 
-    for (const match of html.matchAll(/<(?:a|img|link)\b[^>]*>/g)) {
+    for (const match of html.matchAll(/<(?:a|img|link|script|video)\b[^>]*>/g)) {
       const tag = match[0];
       const a = attrs(tag);
       if (tag.startsWith('<img')) {
@@ -42,7 +45,11 @@ async function inspect(directory) {
         check(Number(a.width) > 0 && Number(a.height) > 0, `${name}: image dimensions missing`);
         check(!/^https?:/.test(a.src || ''), `${name}: images must be local`);
       }
-      const url = a.href ?? a.src;
+      if (tag.startsWith('<video')) {
+        check(/\bmuted\b/.test(tag) && /\bplaysinline\b/.test(tag), `${name}: decorative video must be silent and inline`);
+        check(a.preload === 'none' && !/\bautoplay\b/.test(tag), `${name}: motion must respect the visitor's preference before downloading video`);
+      }
+      const url = a.href ?? a.src ?? a['data-src'];
       if (!url) continue;
       check(!/^(javascript:|http:|\/\/)/i.test(url), `${name}: unsafe or insecure URL ${url}`);
       if (/^https:/.test(url)) continue;
@@ -60,7 +67,7 @@ async function inspect(directory) {
 }
 
 await inspect(root);
-check(bytes < 1_200_000, `Site exceeds 1.2 MB: ${bytes} bytes`);
+check(bytes < 1_600_000, `Site exceeds 1.6 MB including the optional video: ${bytes} bytes`);
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;

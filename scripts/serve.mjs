@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const project = fileURLToPath(new URL('../', import.meta.url));
 const root = path.resolve(project, process.argv[2] || 'site');
 const port = Number(process.env.PORT || 4173);
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.txt': 'text/plain; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2' };
+const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.txt': 'text/plain; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2', '.js': 'text/javascript; charset=utf-8', '.mp4': 'video/mp4' };
 
 const server = createServer(async (request, response) => {
   if (!['GET', 'HEAD'].includes(request.method)) {
