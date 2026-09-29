@@ -1,5 +1,29 @@
 @layer reset, tokens, base, components, responsive;
 
+@font-face {
+  font-family: Commissioner;
+  src: url("./assets/fonts/commissioner-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Commissioner;
+  src: url("./assets/fonts/commissioner-medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bona Nova";
+  src: url("./assets/fonts/bona-nova-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
   body, h1, h2, h3, p, figure { margin: 0; }
@@ -12,12 +36,14 @@
   :root {
     color-scheme: light dark;
     --paper: #f4f3eb;
-    --ink: #213e32;
+    --ink: #1e432f;
     --muted: #536157;
     --line: #bfc5b9;
-    --court: #234c3c;
+    --court: #194532;
     --court-ink: #f4f3eb;
     --court-muted: #d2dccf;
+    --club: #e9e2ef;
+    --violet: #705380;
     --ball: #dfed91;
     --ball-pressed: #cfdd7f;
     --ball-ink: #213e32;
@@ -26,8 +52,8 @@
     --button-active: #172d24;
     --button-ink: #f4f3eb;
     --focus: #97520f;
-    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --serif: Georgia, "Times New Roman", serif;
+    --font: Commissioner, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --serif: "Bona Nova", Georgia, "Times New Roman", serif;
     --page-width: 1440px;
     --gutter: clamp(1.25rem, 4.6vw, 5rem);
     --space-xs: .5rem;
@@ -41,16 +67,18 @@
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --paper: #172a24;
+      --paper: #142c23;
       --ink: #edf0df;
       --muted: #bcc7b9;
       --line: #516459;
       --court: #0e211a;
       --court-muted: #c5d1c0;
-      --button: #dfed91;
-      --button-hover: #ecf5ba;
-      --button-active: var(--ball-pressed);
-      --button-ink: #172a24;
+      --club: #30283b;
+      --violet: #d5bfea;
+      --button: #f4f3eb;
+      --button-hover: #e6edd7;
+      --button-active: #d5dec4;
+      --button-ink: #1e432f;
       --focus: #dfed91;
     }
   }
@@ -62,6 +90,7 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font);
+    font-synthesis: none;
     font-size: var(--text-body);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -72,7 +101,7 @@
   main:focus { outline: none; }
   ::selection { color: #172a24; background: #dfed91; }
   .shell { max-width: var(--page-width); padding-inline: var(--gutter); margin-inline: auto; }
-  .eyebrow { font-size: var(--text-sm); letter-spacing: .08em; text-transform: uppercase; }
+  .eyebrow { font-size: var(--text-sm); font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
   .text-link { display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; text-decoration: none; }
   .text-link:hover { text-decoration: underline; }
   .skip-link { position: fixed; z-index: 10; top: 1rem; left: 1rem; padding: 1rem; background: var(--paper); transform: translateY(-180%); }
@@ -80,9 +109,10 @@
 }
 
 @layer components {
-  .header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); padding-block: 1.6rem; }
+  .header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); padding-block: 1.6rem; position: relative; }
+  .header::after { content: ""; position: absolute; inset: auto var(--gutter) 0; height: 4px; border-block: 1px solid var(--line); }
   .wordmark { display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; text-decoration: none; }
-  .wordmark span { font-family: var(--serif); font-style: italic; font-size: 2rem; letter-spacing: -.08em; line-height: 1; }
+  .wordmark span { font-family: var(--serif); font-style: italic; font-size: 2.1rem; letter-spacing: -.055em; line-height: 1; }
   .tennis-mark { width: 27px; height: 27px; flex-shrink: 0; fill: var(--ball); stroke: var(--ball-ink); stroke-width: 1.7; }
   .tennis-mark path { fill: none; }
   .header-location { font-size: var(--text-sm); color: var(--muted); }
@@ -92,10 +122,10 @@
   .hero { display: grid; grid-template-columns: 1.12fr 1fr; gap: clamp(2rem, 5vw, 5.5rem); padding-top: clamp(2.75rem, 5vw, 5rem); padding-bottom: var(--space-xl); }
   .hero-copy { display: flex; flex-direction: column; min-width: 0; padding-top: .5rem; }
   .hero-copy > .eyebrow { margin-bottom: clamp(1.5rem, 3.5vw, 3rem); }
-  h1 { font-size: clamp(3.3rem, 7.45vw, 7rem); font-weight: 450; letter-spacing: -.075em; line-height: .98; overflow-wrap: anywhere; }
+  h1 { font-size: clamp(3.3rem, 8.45vw, 8.25rem); font-weight: 500; letter-spacing: -.06em; line-height: 1; overflow-wrap: anywhere; }
   h1 span { display: block; }
   .hero-intro { margin-top: clamp(2rem, 5vw, 4rem); }
-  .hero-line { font-family: var(--serif); font-style: italic; font-size: clamp(2rem, 3vw, 3rem); letter-spacing: -.045em; line-height: 1.06; }
+  .hero-line { color: var(--violet); font-family: var(--serif); font-style: italic; font-size: clamp(2.4rem, 3.8vw, 3.6rem); letter-spacing: -.035em; line-height: 1.04; }
   .hero-action { margin-top: var(--space-lg); min-width: 0; max-width: 100%; }
   .button { display: inline-flex; align-items: center; justify-content: space-between; gap: 1.25rem; min-height: 56px; max-width: 100%; padding: .875rem 1.5rem; border: 1px solid transparent; border-radius: 999px; font-size: 1rem; font-weight: 500; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
   .button-icon { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -111,12 +141,21 @@
   .hero-figure figcaption { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); padding-top: .4rem; font-size: .75rem; color: var(--muted); }
   figcaption a { display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; }
 
+  .story { background: var(--club); }
+  .story-inner { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; gap: clamp(2rem, 5vw, 5.5rem); padding-block: clamp(2.5rem, 4.5vw, 4.5rem); }
+  .story-copy { min-width: 0; }
+  .story-copy .eyebrow { color: var(--violet); margin-bottom: 1.5rem; }
+  .story-copy h2 { font-size: clamp(2rem, 3.25vw, 3.1rem); letter-spacing: -.04em; line-height: 1.16; }
+  .story-favorite { margin-top: 1.25rem; color: var(--violet); font-family: var(--serif); font-style: italic; font-size: clamp(1.8rem, 2.6vw, 2.5rem); letter-spacing: -.025em; line-height: 1.15; }
+  .grass-art { width: 100%; aspect-ratio: 16 / 9; background: #f4f3eb url("./assets/grass-arcs.svg") center / cover no-repeat; }
+
   .contact { background: var(--court); color: var(--court-ink); scroll-margin-top: 0; }
   .contact :focus-visible { outline-color: var(--ball); }
   .contact-inner { display: grid; grid-template-columns: 1.25fr .8fr 1fr; gap: clamp(2rem, 4.5vw, 4rem); align-items: start; padding-block: var(--space-xl); }
   .contact-heading { min-width: 0; }
   .contact-heading .eyebrow { color: var(--court-muted); margin-bottom: var(--space-lg); }
-  h2 { font-size: clamp(2.7rem, 4.6vw, 4.8rem); font-weight: 400; letter-spacing: -.065em; line-height: 1.02; overflow-wrap: anywhere; }
+  h2 { font-size: clamp(2.7rem, 4.3vw, 4.4rem); font-weight: 400; letter-spacing: -.055em; line-height: 1.06; overflow-wrap: anywhere; }
+  h2 em { font-family: var(--serif); font-weight: 400; letter-spacing: -.045em; }
   .court { width: min(100%, 19rem); margin-top: 4rem; }
   .court path { fill: none; stroke: var(--court-muted); stroke-width: 1; opacity: .6; }
   .court circle { fill: var(--ball); }
@@ -133,14 +172,13 @@
   .contact-copy .contact-handle { margin-top: var(--space-sm); font-size: var(--text-sm); }
 
   .footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-md); padding-block: 1.75rem; font-size: var(--text-sm); }
-  .footer p { color: var(--muted); }
-  .footer p span { margin-inline: .5rem; }
+  .footer p { display: flex; flex-wrap: wrap; gap: .25rem .5rem; color: var(--muted); }
 }
 
 @layer responsive {
   @media (min-width: 90rem) { .hero { gap: 5.5rem; } }
   @media (max-width: 64rem) {
-    .hero { gap: 2rem; }
+    .hero, .story-inner { gap: 2rem; }
     .hero-intro { margin-top: 3rem; }
     .hero-figure figcaption { display: block; }
     .hero-figure figcaption > span { display: none; }
@@ -152,21 +190,25 @@
     .contact-copy { align-self: center; }
   }
   @media (max-width: 43rem) {
+    :root { --gutter: clamp(20px, 4.6vw, 32px); }
     .header { padding-block: 1rem; }
     .header-location { display: none; }
     .hero { grid-template-columns: 1fr; padding-top: 2.5rem; gap: 2.5rem; }
     .hero-copy > .eyebrow { margin-bottom: 1.5rem; }
-    h1 { font-size: clamp(3.2rem, 12.2vw, 5.4rem); line-height: 1; }
+    h1 { font-size: clamp(3.2rem, 14.8vw, 6rem); line-height: 1; }
     .hero-intro { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: start; justify-content: space-between; }
-    .hero-line { font-size: clamp(1.9rem, 5.4vw, 2.4rem); }
+    .hero-line { font-size: clamp(2.3rem, 7.3vw, 3rem); overflow-wrap: anywhere; }
     .hero-action { margin-top: 0; width: 100%; }
-    .hero-action .button { gap: 1rem; }
-    .button { width: 100%; }
+    .button { width: 100%; gap: clamp(12px, 3vw, 20px); padding-inline: clamp(20px, 4.6vw, 24px); }
     .supporting { max-width: none; font-size: .75rem; }
     .hero-figure { max-width: 34rem; }
     .portrait { aspect-ratio: 1 / 1.06; object-position: 50% 68%; }
     .hero-figure figcaption { display: flex; }
     .hero-figure figcaption > span { display: inline; }
+    .story-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .story-copy h2 { font-size: clamp(1.85rem, 6.2vw, 2.75rem); }
+    .story-favorite { font-size: 2rem; overflow-wrap: anywhere; }
+    .grass-art { width: min(100%, 28rem); justify-self: end; }
     .contact-inner { gap: 2.5rem 1.5rem; }
     .contact-heading { display: block; }
     h2 { font-size: clamp(2.7rem, 9vw, 4rem); }
@@ -176,8 +218,8 @@
     .equipment-figure { grid-column: 1 / -1; width: 62%; margin-left: auto; }
     .equipment-figure img { aspect-ratio: 1; }
     .footer { align-items: start; }
-    .footer p { max-width: 20ch; }
-    .footer p span { display: none; }
+    .footer p { display: grid; max-width: 20ch; }
+    .footer .footer-divider { display: none; }
     .footer .text-link { flex-shrink: 0; }
   }
   @media (max-width: 24rem) {
