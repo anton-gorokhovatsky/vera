@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# Preview pages have a noindex meta tag. Crawling stays allowed so it can be read.
