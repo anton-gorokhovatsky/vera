@@ -78,8 +78,7 @@ pointer.className = 'ball-pointer';
 pointer.setAttribute('aria-hidden', 'true');
 pointer.innerHTML = '<svg viewBox="0 0 48 48"><use href="#tennis-ball"/></svg>';
 document.body.append(pointer);
-const exposure = 620;
-const ghostInterval = 62;
+const exposure = 480;
 let trace = [];
 let traceFrame = 0;
 let lastFrame = 0;
@@ -155,40 +154,30 @@ function paintTrail(time) {
   colorPointer(document.elementFromPoint(flight.x,flight.y) || document.body);
   pointer.style.transform = `translate(${flight.x-9}px,${flight.y-9}px)`;
   const last = trace.at(-1);
-  if (!last || Math.hypot(flight.x-last.x,flight.y-last.y) > .3) trace.push({x:flight.x,y:flight.y,time,color:trailColor});
+  if (!last || Math.hypot(flight.x-last.x,flight.y-last.y) >= 6) trace.push({x:flight.x,y:flight.y,time,color:trailColor});
+  if (trace.length > 28) trace.shift();
   trace = trace.filter(point => time-point.time < exposure);
   if (context) {
     context.clearRect(0,0,innerWidth,innerHeight);
-    // Successive exposures of the same ball, sampled along its smoothed flight.
-    // Sample by elapsed time (not pointer events) so the spacing reflects speed.
-    let previous = flight;
-    const seam = new Path2D(liquidSeam(liquidPhase));
-    for (let age=ghostInterval; age<exposure; age+=ghostInterval) {
-      const stamp = time-age;
-      const next = trace.findIndex(point => point.time >= stamp);
-      if (next < 1) continue;
-      const from=trace[next-1], to=trace[next];
-      const t=(stamp-from.time)/(to.time-from.time), u=1-t;
-      const before=trace[Math.max(0,next-2)], after=trace[Math.min(trace.length-1,next+1)];
-      const point = {};
-      for (const axis of ['x','y']) {
-        const m0=(to[axis]-before[axis])/(to.time-before.time)*(to.time-from.time);
-        const m1=(after[axis]-from[axis])/(after.time-from.time)*(to.time-from.time);
-        point[axis]=(1+2*t)*u*u*from[axis]+t*u*u*m0+t*t*(3-2*t)*to[axis]-t*t*u*m1;
+    // Preserve the original overlapping ball exposures and their short fade.
+    // Only the shared flight coordinates are smoothed; no sparse ghost sampling.
+    trace.forEach((point,i) => {
+      const life = 1-(time-point.time)/exposure;
+      context.globalAlpha = life*life*.3;
+      context.fillStyle = point.color;
+      context.beginPath();
+      context.arc(point.x,point.y,4+life*5,0,Math.PI*2);
+      context.fill();
+      if (i) {
+        const previous = trace[i-1], before = trace[Math.max(0,i-2)];
+        context.strokeStyle = point.color;
+        context.lineWidth = life*2;
+        context.beginPath();
+        context.moveTo((before.x+previous.x)/2,(before.y+previous.y)/2);
+        context.quadraticCurveTo(previous.x,previous.y,(previous.x+point.x)/2,(previous.y+point.y)/2);
+        context.stroke();
       }
-      const life=1-age/exposure, radius=8*(.72+.28*life);
-      if (Math.hypot(point.x-previous.x,point.y-previous.y) < 19) continue;
-      previous=point;
-      context.save();
-      context.globalAlpha=.7*life*life;
-      context.translate(point.x,point.y);
-      context.beginPath();context.arc(0,0,radius,0,Math.PI*2);
-      context.fillStyle=t<.5 ? from.color : to.color;context.fill();context.clip();
-      context.rotate(-32*Math.PI/180);
-      context.scale(radius/21,radius/21);context.translate(-24,-24);
-      context.strokeStyle='#fffdf0';context.lineWidth=2.1;context.stroke(seam);
-      context.restore();
-    }
+    });
     context.globalAlpha = 1;
   }
   const moving = Math.hypot(flight.x-target.x,flight.y-target.y) > .05 || Math.hypot(flight.vx,flight.vy) > .5;
@@ -217,14 +206,33 @@ document.addEventListener('media-viewer-change', clearFlight);
 finePointer.addEventListener('change',clearFlight);
 sizeTrail();
 
-// The two curved seam sections stay recognisable while a small wave passes.
+// Rotate a continuous seam on a sphere. Clip each crossing at its horizon,
+// so the back of the seam cannot jump across the visible face.
 const seams = [...document.querySelectorAll('#tennis-ball .ball-seam')];
-function liquidSeam(phase) {
-  const drift = Math.sin(phase)*5.5, bend = Math.cos(phase)*3;
-  return `M${7+drift} 0C${24+bend} 9 ${24-bend} 39 ${7-drift} 48M${41+drift} 0C${24+bend} 9 ${24-bend} 39 ${41-drift} 48`;
+function seamProjection(angle) {
+  let path = '', previous = null, pen = false;
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const point = (command, p) => `${command}${(24+21*p.x).toFixed(2)} ${(24+21*p.y).toFixed(2)}`;
+  for (let i=0; i<=240; i++) {
+    const t = i/240*Math.PI*2;
+    const depth = .62*Math.cos(2*t), norm = Math.hypot(1,depth);
+    const x = Math.cos(t)/norm, y = Math.sin(t)/norm, z = depth/norm;
+    const current = {x:x*cos+z*sin, y, z:z*cos-x*sin};
+    if (previous && (previous.z>=0) !== (current.z>=0)) {
+      const ratio = previous.z/(previous.z-current.z);
+      const edge = {x:previous.x+(current.x-previous.x)*ratio, y:previous.y+(current.y-previous.y)*ratio};
+      path += point(pen ? 'L' : 'M',edge);
+      pen = current.z>=0;
+    }
+    if (current.z>=0) { path += point(pen ? 'L' : 'M',current); pen = true; }
+    else pen = false;
+    previous = current;
+  }
+  return path;
 }
-let liquidPhase = 0, liquidEnergy = .75, lastSpin = 0;
-function wakeBall(energy = 1) { if (enabled) liquidEnergy = Math.max(liquidEnergy,energy); }
+let rotation = .6, spinEnergy = .75, lastSpin = 0;
+let currentSeam = seamProjection(rotation);
+function wakeBall(energy = 1) { if (enabled) spinEnergy = Math.max(spinEnergy,energy); }
 document.addEventListener('pointerover', event => {
   const control = interactiveTarget(event.target);
   if (control && !control.contains(event.relatedTarget)) wakeBall(.9);
@@ -260,16 +268,16 @@ function restoreFavicon() {
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) restoreFavicon(); });
 function spinBall(time) {
-  if (enabled && !document.hidden && !viewerOpen && !menuOpen && !inlinePlaying && time-lastSpin > 40) {
+  if (enabled && !document.hidden && !viewerOpen && !menuOpen && !inlinePlaying) {
     const dt = Math.min((time-lastSpin)/1000, .05);
-    liquidPhase += dt * (.72 + .45*liquidEnergy);
-    liquidEnergy *= Math.exp(-dt * .55);
-    const d = liquidSeam(liquidPhase);
-    seams.forEach(path => path.setAttribute('d',d));
-    if (time-lastIcon > 400) { updateFavicon(d); lastIcon = time; }
+    rotation += dt * (.65 + .15*spinEnergy);
+    spinEnergy *= Math.exp(-dt * .55);
+    currentSeam = seamProjection(rotation);
+    seams.forEach(path => path.setAttribute('d',currentSeam));
+    if (time-lastIcon > 400) { updateFavicon(currentSeam); lastIcon = time; }
     lastSpin = time;
   } else if (!enabled || document.hidden || viewerOpen || menuOpen || inlinePlaying) { lastSpin = time; if (favicon?.type === 'image/png') restoreFavicon(); }
   requestAnimationFrame(spinBall);
 }
-seams.forEach(path => path.setAttribute('d',liquidSeam(liquidPhase)));
+seams.forEach(path => path.setAttribute('d',currentSeam));
 requestAnimationFrame(spinBall);

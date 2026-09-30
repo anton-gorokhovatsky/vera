@@ -4,12 +4,18 @@
   const source = document.querySelector('.header nav');
   if (!trigger || !source || typeof HTMLDialogElement === 'undefined') return;
   const mobile = matchMedia('(max-width: 700px)');
+  const desktop = matchMedia('(min-width: 1001px)');
+  const navHome = document.createComment('Navigation returns here below desktop width.');
+  source.before(navHome);
   const chinese = document.documentElement.lang.startsWith('zh');
   const panel = document.createElement('dialog');
   panel.id = 'mobile-menu';
   panel.className = 'mobile-menu';
   panel.setAttribute('aria-labelledby', 'menu-title');
-  panel.innerHTML = `<div class="menu-head"><p id="menu-title">${chinese ? '菜单' : 'Меню'}</p><button class="menu-close" type="button" autofocus><span>${chinese ? '关闭' : 'Закрыть'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div>`;
+  panel.innerHTML = `<div class="menu-head"><p id="menu-title" tabindex="-1" autofocus>${chinese ? '菜单' : 'Меню'}</p><button class="menu-close" type="button"><span>${chinese ? '关闭' : 'Закрыть'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div>`;
+  // Enter on the panel title; the first Tab reaches the close button.
+  // This avoids presenting a keyboard ring as the default touch-open state.
+  const title = panel.querySelector('#menu-title');
   const links = source.cloneNode(true);
   links.className = 'menu-sections';
   const language = links.querySelector('.language-link');
@@ -32,6 +38,7 @@
     if (!mobile.matches || panel.open) return;
     destination = null;
     panel.showModal();
+    title.focus({preventScroll: true});
     signal(true);
   });
   panel.querySelector('.menu-close').addEventListener('click', () => panel.close());
@@ -39,7 +46,7 @@
     if (event.key !== 'Tab') return;
     const controls = [...panel.querySelectorAll('button,a[href]')];
     const first = controls[0], last = controls.at(-1);
-    if (event.shiftKey && document.activeElement === first) {
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === title)) {
       event.preventDefault(); last.focus();
     } else if (!event.shiftKey && document.activeElement === last) {
       event.preventDefault(); first.focus();
@@ -62,4 +69,14 @@
     panel.close();
   });
   mobile.addEventListener('change', () => { if (!mobile.matches && panel.open) panel.close(); });
+  function placeNavigation() {
+    const focused = source.contains(document.activeElement) ? document.activeElement : null;
+    source.classList.toggle('desktop-menu',desktop.matches);
+    document.documentElement.classList.toggle('has-desktop-menu',desktop.matches);
+    if (desktop.matches) document.querySelector('main').before(source);
+    else navHome.after(source);
+    if (focused) (mobile.matches ? trigger : focused).focus({preventScroll:true});
+  }
+  desktop.addEventListener('change',placeNavigation);
+  placeNavigation();
 })();
