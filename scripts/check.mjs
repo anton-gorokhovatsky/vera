@@ -51,8 +51,8 @@ async function inspect(directory) {
       check(meta['og:title'] && meta['og:description'] && meta['og:image:alt'], `${name}: sharing text or image description missing`);
       check(meta['twitter:card'] === 'summary_large_image' && meta['twitter:image'] === meta['og:image'], `${name}: sharing cards disagree`);
       check(meta['og:image:width'] === '1200' && meta['og:image:height'] === '630' && meta['og:image:type'] === 'image/jpeg', `${name}: sharing image dimensions or type missing`);
-      check(meta['og:image'] === `https://anton-gorokhovatsky.github.io/vera/assets/share-${locale}.jpg`, `${name}: wrong sharing image language`);
-      try { await stat(path.join(root, `assets/share-${locale}.jpg`)); } catch { failures.push(`${name}: sharing image missing`); }
+      check(meta['og:image'] === `https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-${locale}.jpg`, `${name}: wrong sharing image language`);
+      try { await stat(path.join(root, `assets/share-tennis-${locale}.jpg`)); } catch { failures.push(`${name}: sharing image missing`); }
     }
 
     for (const match of html.matchAll(/<(?:a|img|link|script|video)\b[^>]*>/g)) {

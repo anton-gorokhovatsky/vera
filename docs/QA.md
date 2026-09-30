@@ -205,3 +205,10 @@
 - [Quality 36720591484](https://github.com/anton-gorokhovatsky/vera/actions/runs/36720591484) и [Pages 36720591604](https://github.com/anton-gorokhovatsky/vera/actions/runs/36720591604) — success.
 - Десять публичных файлов побайтово совпали с `dist/`, включая обе локали, новые JPEG, CSS и motion.js. Все HTTP 200 с соответствующими MIME; отчёт `artifacts/cursor-smoothing/public-parity.json`.
 - На Pages осмотрены RU 1280×800 и 320×800, ZH 390×844: переполнение 0, консоль без ошибок/предупреждений, новая фотография загружена. Сертификат раскрывается без dialog и закрывается Enter. Подтверждены localized canonical и og:image. Снимки `public-footer.png`, `public-biography.png`, `public-320.png`, `public-zh.png`.
+
+## Теннисный кадр на обложках шаринга — 30.09.2026
+
+- На RU и zh-Hans обложках спринтерская фотография заменена кадром Веры перед подачей из её ролика DakZAr7stdS. Кадрирование сохраняет фигуру, ракетку и разметку корта. Источник записан в ASSETS.md; фотографии биографии не менялись.
+- Обновлены Open Graph / Twitter image и alt, локализатор и проверка путей. Новые имена `share-tennis-ru.jpg` / `share-tennis-zh.jpg` отделяют исправленные ресурсы от прежних изображений в кэше.
+- Обе композиции просмотрены в браузере при 1200×630 и как превью 320×168. Экспорты — JPEG 1200×630. Локальная консоль без ошибок и предупреждений; `npm run check`, `npm run build` и `git diff --check` успешны.
+- Доказательства — `artifacts/tennis-sharing/`. Проверка ограничена обложками и метаданными; отправка ссылки в мессенджеры не выполнялась.
