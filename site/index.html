@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#f4f3eb" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#142c23" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#10251c" media="(prefers-color-scheme: dark)">
     <meta name="robots" content="noindex, nofollow">
     <title>Вера Дуденкова — тренер по большому теннису в Москве</title>
     <meta name="description" content="Я Вера Дуденкова, тренер по большому теннису в Москве. Напишите мне, чтобы узнать о тренировках.">
@@ -17,7 +17,7 @@
     <link rel="preload" href="./assets/fonts/commissioner-regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./assets/fonts/commissioner-medium.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./assets/fonts/bona-nova-italic.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="./styles.css?v=serve-01">
+    <link rel="stylesheet" href="./styles.css?v=court-01">
     <script src="./motion.js?v=serve-01" defer></script>
   </head>
   <body id="top">
@@ -34,32 +34,31 @@
       <a class="text-link" href="#contact">На тренировку <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"></path></svg></a>
     </header>
 
-    <main id="main" tabindex="-1">
+    <main class="court" id="main" tabindex="-1">
       <section class="hero" aria-labelledby="hero-title">
         <div class="rise" aria-hidden="true"></div>
-        <div class="hero-inner shell">
-          <div class="hero-intro">
-            <p class="eyebrow">Тренер по большому теннису · Москва</p>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Тренер по большому теннису</p>
+            <h1 id="hero-title"><span>Вера</span> Дуденкова</h1>
             <p class="hero-line">Увидимся <br>на корте.</p>
-          </div>
-          <div class="hero-action">
             <a class="button button-ball" href="#contact">Обсудить тренировку<svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 5 14 14M5 19h14V5"></path></svg></a>
           </div>
           <figure class="hero-figure">
             <img src="./assets/vera-serve.jpg" width="1080" height="1920" alt="Вера Дуденкова выполняет подачу на крытом теннисном корте" fetchpriority="high" decoding="async">
             <video class="hero-video" data-src="./assets/vera-serve.mp4" width="720" height="1280" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
           </figure>
-          <h1 id="hero-title"><span>Вера</span> Дуденкова</h1>
           <div class="hero-baseline">
-            <a class="text-link" href="https://www.instagram.com/vera_dudenkova/reel/DakZAr7stdS/">Моя подача · из Instagram</a>
+            <a class="text-link" href="https://www.instagram.com/vera_dudenkova/reel/DakZAr7stdS/">Моя подача</a>
             <button class="motion-toggle" type="button" hidden data-playing="false"><svg class="motion-icon" viewBox="0 0 20 20" aria-hidden="true"><path class="pause-icon" d="M7 5v10M13 5v10"></path><path class="play-icon" d="m7 4 8 6-8 6z"></path></svg><span>Включить движение</span></button>
           </div>
         </div>
       </section>
-      <section class="story shell" aria-labelledby="story-title">
-        <div class="section-label"><p class="eyebrow">Немного обо мне</p></div>
+      <div class="service-court">
+      <section class="story" aria-labelledby="story-title">
         <div class="story-inner">
           <div class="story-copy">
+            <p class="eyebrow">Немного обо мне</p>
             <h2 id="story-title">Из спринта<br><em>в теннис.</em></h2>
             <p class="story-lead">12 лет моей жизни были связаны с лёгкой атлетикой. Раньше я бегала спринт. Сегодня играю в теннис и приглашаю вас на тренировки.</p>
             <div class="qualification">
@@ -75,26 +74,23 @@
         </div>
       </section>
       <section class="tennis-life" aria-labelledby="life-title">
-        <div class="life-inner shell">
-          <div class="section-label"><p class="eyebrow">Мои теннисные будни</p></div>
           <div class="life-grid">
             <figure class="court-photo">
               <img src="./assets/court-morning.jpg" width="900" height="1600" alt="Моя ракетка на корзине мячей у сетки залитого солнцем крытого корта" loading="lazy" decoding="async">
               <figcaption><a class="text-link" href="https://www.instagram.com/stories/highlights/18025220059563084/">Из моего теннисного архива</a></figcaption>
             </figure>
             <div class="life-copy">
-              <p class="eyebrow">Особенная любовь</p>
+              <p class="eyebrow">Мои теннисные будни</p>
               <h2 id="life-title">Теннис.<br><em>И Уимблдон.</em></h2>
               <p>Люблю Уимблдон. А моё идеальное утро начинается на корте.</p>
               <a class="text-link" href="https://www.instagram.com/vera_dudenkova/reel/DbVuw8es0-V/">Посмотреть моё теннисное утро <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"></path></svg></a>
-              <svg class="court-diagram" viewBox="0 0 320 150" aria-hidden="true" focusable="false"><path d="M1 1h318v148H1zM1 20h318M1 130h318M160 1v148M83 20v110M237 20v110M83 75h154"></path><circle cx="237" cy="75" r="7"></circle></svg>
             </div>
           </div>
-        </div>
       </section>
+      </div>
       <section class="contact" id="contact" aria-labelledby="contact-title">
-        <div class="contact-inner shell">
-          <div class="section-label"><p class="eyebrow">Запись на тренировку</p></div>
+        <div class="contact-inner">
+          <p class="eyebrow">Запись на тренировку</p>
           <h2 id="contact-title">Сыграем?</h2>
           <div class="contact-copy">
             <p>Напишите мне в директ. Расскажите, играли ли вы раньше и какое время вам удобно.</p>
