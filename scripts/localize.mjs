@@ -3,6 +3,10 @@ const root = new URL('../site/',import.meta.url);
 let html = await readFile(new URL('index.html',root),'utf8');
 const translations = JSON.parse(await readFile(new URL('../content/zh-Hans.json',import.meta.url),'utf8'));
 html = html.replace('<html lang="ru">','<html lang="zh-Hans">').replace('content="ru_RU"','content="zh_CN"');
+html = html.replace('property="og:locale:alternate" content="zh_CN"','property="og:locale:alternate" content="ru_RU"')
+  .replace('rel="canonical" href="https://anton-gorokhovatsky.github.io/vera/"','rel="canonical" href="https://anton-gorokhovatsky.github.io/vera/zh/"')
+  .replace('property="og:url" content="https://anton-gorokhovatsky.github.io/vera/"','property="og:url" content="https://anton-gorokhovatsky.github.io/vera/zh/"')
+  .replaceAll('/assets/share-ru.jpg','/assets/share-zh.jpg');
 const languageLink = '<a class="language-link" href="./zh/" lang="zh-Hans" hreflang="zh-Hans">中文</a>';
 html = html.replaceAll(languageLink,'<a class="language-link" href="./" lang="ru" hreflang="ru">RU</a>');
 for (const [ru,zh] of Object.entries(translations).sort(([a],[b])=>b.length-a.length)) html = html.replaceAll(ru,zh);

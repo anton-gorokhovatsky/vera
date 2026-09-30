@@ -43,6 +43,18 @@ async function inspect(directory) {
     }
     check(!/lorem ipsum|TODO|TBD|example\.com|ваш текст/i.test(html), `${name}: unfinished content`);
 
+    if (name === 'index.html' || name === 'zh/index.html') {
+      const meta = Object.fromEntries([...html.matchAll(/<meta\b[^>]*>/g)].map(([tag]) => { const a = attrs(tag); return [a.property || a.name, a.content]; }));
+      const locale = name.startsWith('zh/') ? 'zh' : 'ru';
+      const canonical = `https://anton-gorokhovatsky.github.io/vera/${locale === 'zh' ? 'zh/' : ''}`;
+      check(html.includes(`<link rel="canonical" href="${canonical}">`) && meta['og:url'] === canonical, `${name}: canonical and sharing URL must identify this language`);
+      check(meta['og:title'] && meta['og:description'] && meta['og:image:alt'], `${name}: sharing text or image description missing`);
+      check(meta['twitter:card'] === 'summary_large_image' && meta['twitter:image'] === meta['og:image'], `${name}: sharing cards disagree`);
+      check(meta['og:image:width'] === '1200' && meta['og:image:height'] === '630' && meta['og:image:type'] === 'image/jpeg', `${name}: sharing image dimensions or type missing`);
+      check(meta['og:image'] === `https://anton-gorokhovatsky.github.io/vera/assets/share-${locale}.jpg`, `${name}: wrong sharing image language`);
+      try { await stat(path.join(root, `assets/share-${locale}.jpg`)); } catch { failures.push(`${name}: sharing image missing`); }
+    }
+
     for (const match of html.matchAll(/<(?:a|img|link|script|video)\b[^>]*>/g)) {
       const tag = match[0];
       const a = attrs(tag);

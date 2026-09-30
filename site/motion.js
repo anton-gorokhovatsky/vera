@@ -63,7 +63,7 @@ document.addEventListener('inline-video-change', event => { inlinePlaying = even
 document.addEventListener('media-viewer-change', event => { viewerOpen = event.detail.open; renderMotion(); });
 renderMotion();
 
-// A short exposure trail, only while a fine pointer actually moves.
+// One flight path owns both the ball and its exposure trail.
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const interactiveTarget = target => target instanceof Element && target.closest('a,button,summary,input,textarea,select,video,[role="button"],[contenteditable="true"]');
 const trail = document.createElement('canvas');
@@ -71,77 +71,150 @@ trail.className = 'cursor-trail';
 trail.setAttribute('aria-hidden', 'true');
 document.body.append(trail);
 const context = trail.getContext('2d');
-let trace = [];
-let traceFrame = 0;
-function sizeTrail() {
-  const dpr = Math.min(devicePixelRatio || 1, 2);
-  trail.width = innerWidth * dpr;
-  trail.height = innerHeight * dpr;
-  context?.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-function paintTrail(time) {
-  traceFrame = 0;
-  if (!context) return;
-  context.clearRect(0, 0, innerWidth, innerHeight);
-  if (!enabled || !finePointer.matches || document.hidden || viewerOpen || inlinePlaying) { trace = []; return; }
-  trace = trace.filter(point => time - point.time < 480);
-  trace.forEach((point, i) => {
-    const life = 1 - (time - point.time) / 480;
-    context.globalAlpha = life * life * .3;
-    context.fillStyle = '#d6ed65';
-    context.beginPath();
-    context.ellipse(point.x, point.y, 4 + life * 5, 4 + life * 5, 0, 0, Math.PI * 2);
-    context.fill();
-    if (i) {
-      context.strokeStyle = '#d6ed65';
-      context.lineWidth = life * 2;
-      context.beginPath();context.moveTo(trace[i-1].x,trace[i-1].y);context.lineTo(point.x,point.y);context.stroke();
-    }
-  });
-  context.globalAlpha = 1;
-  if (trace.length) traceFrame = requestAnimationFrame(paintTrail);
-}
-document.addEventListener('pointermove', event => {
-  if (interactiveTarget(event.target)) { trace = []; context?.clearRect(0,0,innerWidth,innerHeight); return; }
-  if (event.pointerType !== 'mouse' || !enabled || !finePointer.matches || viewerOpen || inlinePlaying) return;
-  const last = trace.at(-1);
-  if (last && Math.hypot(event.clientX - last.x, event.clientY - last.y) < 6) return;
-  trace.push({x:event.clientX,y:event.clientY,time:performance.now()});
-  wakeBall(.6);
-  if (trace.length > 28) trace.shift();
-  if (!traceFrame) traceFrame = requestAnimationFrame(paintTrail);
-}, {passive:true});
-window.addEventListener('resize', sizeTrail, {passive:true});
-document.addEventListener('visibilitychange', () => { if (document.hidden) { trace = []; context?.clearRect(0,0,innerWidth,innerHeight); } });
-sizeTrail();
-
 const pointer = document.createElement('div');
 pointer.className = 'ball-pointer';
 pointer.setAttribute('aria-hidden', 'true');
 pointer.innerHTML = '<svg viewBox="0 0 48 48"><use href="#tennis-ball"/></svg>';
 document.body.append(pointer);
-document.addEventListener('pointermove', event => {
-  const show = event.pointerType === 'mouse' && finePointer.matches && enabled && !viewerOpen && !inlinePlaying && !interactiveTarget(event.target);
-  document.body.classList.toggle('has-ball-pointer', show);
-  if (show) pointer.style.transform = `translate(${event.clientX-9}px,${event.clientY-9}px)`;
-}, {passive:true});
-document.addEventListener('pointerleave', () => document.body.classList.remove('has-ball-pointer'));
-window.addEventListener('blur', () => document.body.classList.remove('has-ball-pointer'));
+const exposure = 440;
+let trace = [];
+let traceFrame = 0;
+let lastFrame = 0;
+let flight = null;
+let target = null;
+let surface = null;
+let trailColor = '#d6ed65';
 
-// Two unbroken liquid ribbons. The circular silhouette stays fixed.
+// Subtract background brightness in HSB while retaining a clean, saturated mark.
+// Raw RGB difference made the yellow dull olive on the green court.
+function ballColor(background) {
+  const channels = background.match(/[\d.]+/g)?.slice(0,3).map(Number) || [11,40,9];
+  const light = Math.max(...channels) / 255;
+  const contrast = light ** 2;
+  const hue = (70 + 180 * contrast) / 60;
+  const saturation = .58 + .12 * contrast;
+  const value = .95 - .72 * contrast;
+  const chroma = value * saturation, x = chroma * (1-Math.abs(hue%2-1)), m = value-chroma;
+  const sectors = [[chroma,x,0],[x,chroma,0],[0,chroma,x],[0,x,chroma],[x,0,chroma],[chroma,0,x]];
+  return `rgb(${sectors[Math.floor(hue)%6].map(channel => Math.round((channel+m)*255)).join(',')})`;
+}
+function surfaceColor(element) {
+  for (let node = element; node; node = node.parentElement) {
+    const color = getComputedStyle(node).backgroundColor;
+    if (color !== 'transparent' && !color.endsWith(', 0)')) return color;
+  }
+  return getComputedStyle(document.body).backgroundColor;
+}
+function colorPointer(element) {
+  if (element === surface) return;
+  surface = element;
+  trailColor = ballColor(surfaceColor(element));
+  pointer.style.setProperty('--tennis-fill',trailColor);
+}
+const footerEmblem = document.querySelector('.footer-emblem');
+function colorFooter() {
+  if (footerEmblem) footerEmblem.style.setProperty('--tennis-fill',ballColor(surfaceColor(footerEmblem)));
+  surface = null;
+}
+new MutationObserver(colorFooter).observe(document.documentElement,{attributes:true,attributeFilter:['data-sky']});
+colorFooter();
+
+function clearFlight() {
+  if (traceFrame) cancelAnimationFrame(traceFrame);
+  traceFrame = 0; lastFrame = 0;
+  trace = []; flight = null; target = null; surface = null;
+  context?.clearRect(0,0,innerWidth,innerHeight);
+  document.body.classList.remove('has-ball-pointer');
+}
+function sizeTrail() {
+  clearFlight();
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  trail.width = innerWidth * dpr;
+  trail.height = innerHeight * dpr;
+  context?.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function stepFlight(dt) {
+  // Analytical critical damping: rounded turns, no springy overshoot.
+  const rate = 68, decay = Math.exp(-rate*dt);
+  for (const axis of ['x','y']) {
+    const velocity = `v${axis}`, offset = flight[axis]-target[axis];
+    const change = (flight[velocity]+rate*offset)*dt;
+    flight[axis] = target[axis]+(offset+change)*decay;
+    flight[velocity] = (flight[velocity]-rate*change)*decay;
+  }
+}
+function paintTrail(time) {
+  traceFrame = 0;
+  if (!enabled || !finePointer.matches || document.hidden || viewerOpen || inlinePlaying || !target) { clearFlight(); return; }
+  const dt = Math.min(Math.max((time-lastFrame)/1000,1/240),.04);
+  lastFrame = time;
+  stepFlight(dt);
+  pointer.style.transform = `translate(${flight.x-9}px,${flight.y-9}px)`;
+  const last = trace.at(-1);
+  if (!last || Math.hypot(flight.x-last.x,flight.y-last.y) > .3) trace.push({x:flight.x,y:flight.y,time});
+  trace = trace.filter(point => time-point.time < exposure);
+  if (context) {
+    context.clearRect(0,0,innerWidth,innerHeight);
+    // A single tapered ribbon avoids the visible joints of separate strokes.
+    const curve = [];
+    for (let i=1;i<trace.length;i++) {
+      const before=trace[i-1], point=trace[i], after=trace[i+1] || point;
+      const start = i===1 ? before : {x:(before.x+point.x)/2,y:(before.y+point.y)/2,time:(before.time+point.time)/2};
+      const end = {x:(point.x+after.x)/2,y:(point.y+after.y)/2,time:(point.time+after.time)/2};
+      for (let step=0;step<=6;step++) {
+        const t=step/6,u=1-t;
+        curve.push({x:u*u*start.x+2*u*t*point.x+t*t*end.x,y:u*u*start.y+2*u*t*point.y+t*t*end.y,time:start.time+(end.time-start.time)*t});
+      }
+    }
+    const left=[],right=[];
+    curve.forEach((point,i) => {
+      const before=curve[Math.max(0,i-1)],after=curve[Math.min(curve.length-1,i+1)];
+      const dx=after.x-before.x,dy=after.y-before.y,length=Math.hypot(dx,dy)||1;
+      const life=Math.max(0,1-(time-point.time)/exposure),radius=1.6*life*life;
+      left.push([point.x-dy/length*radius,point.y+dx/length*radius]);
+      right.push([point.x+dy/length*radius,point.y-dx/length*radius]);
+    });
+    if (left.length) {
+      context.fillStyle=trailColor;
+      context.globalAlpha=.34;
+      context.beginPath();
+      [...left,...right.reverse()].forEach(([x,y],i)=> i ? context.lineTo(x,y) : context.moveTo(x,y));
+      context.closePath();
+      context.fill();
+    }
+    context.globalAlpha = 1;
+  }
+  const moving = Math.hypot(flight.x-target.x,flight.y-target.y) > .05 || Math.hypot(flight.vx,flight.vy) > .5;
+  if (moving || trace.length) traceFrame = requestAnimationFrame(paintTrail);
+  else lastFrame = 0;
+}
+document.addEventListener('pointermove', event => {
+  const show = event.pointerType === 'mouse' && finePointer.matches && enabled && !document.hidden && !viewerOpen && !inlinePlaying && !interactiveTarget(event.target);
+  if (!show) { clearFlight(); return; }
+  target = {x:event.clientX,y:event.clientY};
+  if (!flight) {
+    flight = {...target,vx:0,vy:0};
+    pointer.style.transform = `translate(${flight.x-9}px,${flight.y-9}px)`;
+  }
+  colorPointer(event.target);
+  document.body.classList.add('has-ball-pointer');
+  wakeBall(.6);
+  if (!traceFrame) { lastFrame = performance.now(); traceFrame = requestAnimationFrame(paintTrail); }
+}, {passive:true});
+window.addEventListener('resize', sizeTrail, {passive:true});
+document.addEventListener('pointerleave', clearFlight);
+window.addEventListener('blur', clearFlight);
+document.addEventListener('visibilitychange', () => { if (document.hidden) clearFlight(); });
+document.addEventListener('inline-video-change', clearFlight);
+document.addEventListener('media-viewer-change', clearFlight);
+finePointer.addEventListener('change',clearFlight);
+sizeTrail();
+
+// The two curved seam sections stay recognisable while a small wave passes.
 const seams = [...document.querySelectorAll('#tennis-ball .ball-seam')];
 function liquidSeam(phase) {
-  let path = '';
-  for (const side of [-1,1]) {
-    for (let i = 0; i <= 80; i++) {
-      const t = i / 80, y = -6 + 60*t;
-      const envelope = Math.sin(Math.PI*t);
-      const bend = 11*envelope + 4.5*Math.sin(Math.PI*2*t-phase+side*.7)*envelope;
-      const x = 24 + side*(21-bend) + 2*Math.sin(phase)*envelope;
-      path += `${i?'L':'M'}${x.toFixed(2)} ${y.toFixed(2)}`;
-    }
-  }
-  return path;
+  const wave = Math.sin(phase)*1.4;
+  return `M7 5C${24+wave} 9 ${24-wave} 39 7 43M41 5C${24+wave} 9 ${24-wave} 39 41 43`;
 }
 let liquidPhase = 0, liquidEnergy = .75, lastSpin = 0;
 function wakeBall(energy = 1) { if (enabled) liquidEnergy = Math.max(liquidEnergy,energy); }
@@ -169,7 +242,8 @@ function updateFavicon(d) {
   iconContext.save();
   iconContext.beginPath();iconContext.arc(24,24,21,0,Math.PI*2);iconContext.clip();
   iconContext.fillStyle = '#d6ed65';iconContext.fillRect(0,0,48,48);
-  iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 2.8;iconContext.stroke(new Path2D(d));
+  iconContext.translate(24,24);iconContext.rotate(-32*Math.PI/180);iconContext.translate(-24,-24);
+  iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 2.1;iconContext.stroke(new Path2D(d));
   iconContext.restore();
   favicon.type = 'image/png';favicon.href = iconCanvas.toDataURL('image/png');
 }
