@@ -32,7 +32,7 @@ for (const [lang,label,name,invitation,alt] of [
   img{position:absolute;display:block;width:2016px;max-width:none;height:auto;left:-829px;top:-126px}
   :lang(zh) h1{font-size:82px;line-height:1.15;letter-spacing:.02em;margin-top:52px}
   :lang(zh) .invitation{font-family:'PingFang SC',sans-serif;font-size:42px;font-style:normal;letter-spacing:.02em}
-  </style><main><section class="copy"><div class="meta"><span>${label}</span><svg viewBox="0 0 48 48" aria-hidden="true"><defs><clipPath id="c"><circle cx="24" cy="24" r="21"/></clipPath></defs><circle cx="24" cy="24" r="21" fill="#d6ed65"/><path d="M7 5C24 9 24 39 7 43M41 5C24 9 24 39 41 43" fill="none" stroke="#fffdf0" stroke-width="2.1" clip-path="url(#c)"/></svg></div><h1>${name}</h1><p class="invitation">${invitation}</p></section><div class="photo"><img src="${photo}" alt="${alt}"></div></main></html>`;
+  </style><main><section class="copy"><div class="meta"><span>${label}</span><svg viewBox="0 0 48 48" aria-hidden="true"><defs><clipPath id="c"><circle cx="24" cy="24" r="21"/></clipPath></defs><circle cx="24" cy="24" r="21" fill="#f3ff00"/><path d="M7 5C24 9 24 39 7 43M41 5C24 9 24 39 41 43" fill="none" stroke="#fffdf0" stroke-width="2.1" clip-path="url(#c)"/></svg></div><h1>${name}</h1><p class="invitation">${invitation}</p></section><div class="photo"><img src="${photo}" alt="${alt}"></div></main></html>`;
   await writeFile(new URL(`${lang}.html`,destination),html);
 }
 console.log('Sharing layouts: .local/share/ru.html and zh.html; capture at 1200 × 630.');

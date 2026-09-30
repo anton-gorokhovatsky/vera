@@ -85,17 +85,25 @@ let lastFrame = 0;
 let flight = null;
 let target = null;
 let surface = null;
-let trailColor = '#d6ed65';
+const ballFill = getComputedStyle(document.documentElement).getPropertyValue('--ball').trim() || '#f3ff00';
+const ballRGB = ballFill.match(/[a-f\d]{2}/gi).map(channel => parseInt(channel,16)/255);
+const ballValue = Math.max(...ballRGB), ballChroma = ballValue-Math.min(...ballRGB);
+const ballSaturation = ballChroma/ballValue;
+const [ballRed,ballGreen,ballBlue] = ballRGB;
+const ballHue = 60*((ballValue===ballRed ? (ballGreen-ballBlue)/ballChroma : ballValue===ballGreen ? 2+(ballBlue-ballRed)/ballChroma : 4+(ballRed-ballGreen)/ballChroma)+6)%360;
+let trailColor = ballFill;
 
 // Subtract background brightness in HSB while retaining a clean, saturated mark.
 // Raw RGB difference made the yellow dull olive on the green court.
 function ballColor(background) {
   const channels = background.match(/[\d.]+/g)?.slice(0,3).map(Number) || [11,40,9];
   const light = Math.max(...channels) / 255;
-  const contrast = light ** 2;
-  const hue = (70 + 180 * contrast) / 60;
-  const saturation = .58 + .12 * contrast;
-  const value = .95 - .72 * contrast;
+  // Keep the reference Ball Yellow exact on the dark court and evening field.
+  // HSB adaptation starts on lighter surfaces, reaching deep violet on paper.
+  const contrast = (Math.max(0,light-.45)/.55) ** 2;
+  const hue = (ballHue + (276-ballHue)*contrast) / 60;
+  const saturation = ballSaturation + (.82-ballSaturation)*contrast;
+  const value = ballValue + (.28-ballValue)*contrast;
   const chroma = value * saturation, x = chroma * (1-Math.abs(hue%2-1)), m = value-chroma;
   const sectors = [[chroma,x,0],[x,chroma,0],[0,chroma,x],[0,x,chroma],[x,0,chroma],[chroma,0,x]];
   return `rgb(${sectors[Math.floor(hue)%6].map(channel => Math.round((channel+m)*255)).join(',')})`;
@@ -257,7 +265,7 @@ function updateFavicon(d) {
   iconContext.clearRect(0,0,48,48);
   iconContext.save();
   iconContext.beginPath();iconContext.arc(24,24,21,0,Math.PI*2);iconContext.clip();
-  iconContext.fillStyle = '#d6ed65';iconContext.fillRect(0,0,48,48);
+  iconContext.fillStyle = ballFill;iconContext.fillRect(0,0,48,48);
   iconContext.translate(24,24);iconContext.rotate(-32*Math.PI/180);iconContext.translate(-24,-24);
   iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 2.1;iconContext.stroke(new Path2D(d));
   iconContext.restore();
