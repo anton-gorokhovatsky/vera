@@ -155,3 +155,5 @@ dialog.addEventListener('close', () => {
   trigger?.focus({preventScroll:true});
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pauseInline(); });
+
+document.addEventListener('navigation-change', event => { if (event.detail.open) pauseInline(); });

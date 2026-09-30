@@ -3,8 +3,8 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 const root = new URL('../',import.meta.url);
 const resource = async (file,type) => `data:${type};base64,${(await readFile(new URL(file,root))).toString('base64')}`;
-// Vera preparing a serve, from her own tennis reel DakZAr7stdS.
-const photo = await resource('site/assets/gallery/DakZAr7stdS-poster.webp','image/webp');
+// Vera on court, at 67.85 s of her own tennis morning reel DbVuw8es0-V.
+const photo = await resource('site/assets/gallery/vera-morning-portrait.jpg','image/jpeg');
 const bold = await resource('site/assets/fonts/commissioner-bold.woff2','font/woff2');
 const regular = await resource('site/assets/fonts/commissioner-regular.woff2','font/woff2');
 const serif = await resource('site/assets/fonts/bona-nova-italic.woff2','font/woff2');
@@ -28,8 +28,8 @@ for (const [lang,label,name,invitation,alt] of [
   h1{font-size:86px;line-height:.94;letter-spacing:-.055em;text-transform:uppercase;margin:80px 0 0;font-weight:700}
   .invitation{font:italic 52px/1.1 Bona,Georgia,serif;letter-spacing:-.04em;margin:auto 0 0;padding-top:32px;border-top:1px solid #a5b99a}
   .photo{position:relative;overflow:hidden;border-left:1px solid #a5b99a}
-  /* Keep Vera, her racket and court lines together; exclude the reel's roof caption. */
-  img{position:absolute;display:block;width:150%;max-width:none;height:auto;left:-25%;top:-365px}
+  /* Portrait crop keeps Vera and her racket; her friend and the subtitle stay outside. */
+  img{position:absolute;display:block;width:2016px;max-width:none;height:auto;left:-829px;top:-126px}
   :lang(zh) h1{font-size:82px;line-height:1.15;letter-spacing:.02em;margin-top:52px}
   :lang(zh) .invitation{font-family:'PingFang SC',sans-serif;font-size:42px;font-style:normal;letter-spacing:.02em}
   </style><main><section class="copy"><div class="meta"><span>${label}</span><svg viewBox="0 0 48 48" aria-hidden="true"><defs><clipPath id="c"><circle cx="24" cy="24" r="21"/></clipPath></defs><circle cx="24" cy="24" r="21" fill="#d6ed65"/><path d="M7 5C24 9 24 39 7 43M41 5C24 9 24 39 41 43" fill="none" stroke="#fffdf0" stroke-width="2.1" clip-path="url(#c)"/></svg></div><h1>${name}</h1><p class="invitation">${invitation}</p></section><div class="photo"><img src="${photo}" alt="${alt}"></div></main></html>`;

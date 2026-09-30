@@ -39,7 +39,7 @@ async function inspect(directory) {
     check(/<meta name="robots" content="noindex, nofollow">/.test(html), `${name}: preview must remain noindex until launch`);
     check(!/<(?:iframe|form)\b/i.test(html), `${name}: unexpected embed or data collection`);
     for (const match of html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)) {
-      check(/^<script (?:src="\.{1,2}\/(?:motion|gallery)\.js\?v=[\w-]+" defer|type="module" src="\.{1,2}\/weather\.js\?v=[\w-]+")><\/script>$/.test(match[0]), `${name}: only local motion, gallery and weather scripts are allowed`);
+      check(/^<script (?:src="\.{1,2}\/(?:motion|gallery|navigation)\.js\?v=[\w-]+" defer|type="module" src="\.{1,2}\/weather\.js\?v=[\w-]+")><\/script>$/.test(match[0]), `${name}: only local motion, gallery, navigation and weather scripts are allowed`);
     }
     check(!/lorem ipsum|TODO|TBD|example\.com|ваш текст/i.test(html), `${name}: unfinished content`);
 
@@ -51,7 +51,7 @@ async function inspect(directory) {
       check(meta['og:title'] && meta['og:description'] && meta['og:image:alt'], `${name}: sharing text or image description missing`);
       check(meta['twitter:card'] === 'summary_large_image' && meta['twitter:image'] === meta['og:image'], `${name}: sharing cards disagree`);
       check(meta['og:image:width'] === '1200' && meta['og:image:height'] === '630' && meta['og:image:type'] === 'image/jpeg', `${name}: sharing image dimensions or type missing`);
-      check(meta['og:image'] === `https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-${locale}.jpg`, `${name}: wrong sharing image language`);
+      check(meta['og:image'] === `https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-${locale}.jpg?v=portrait-02`, `${name}: wrong sharing image language`);
       try { await stat(path.join(root, `assets/share-tennis-${locale}.jpg`)); } catch { failures.push(`${name}: sharing image missing`); }
     }
 
