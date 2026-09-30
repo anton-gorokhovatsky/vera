@@ -266,3 +266,10 @@
 - Обе обложки повторно отрисованы в браузере в 1200×630 с тем же жёлтым. Обновлены версии URL CSS, motion.js, favicon и обложек. Консоль локальных страниц без ошибок и предупреждений.
 - `npm run build` с `npm run check`, четыре погодных теста, `node --check site/motion.js` и `git diff --check` прошли. Сборка: 3 страницы, 54 изображения, 1052 КБ основная часть, 21981 КБ галерея по запросу.
 - Проверка ограничена затронутыми компонентами в браузере Codex. Физические телефоны и Safari на устройстве не проверялись.
+
+Публичный контроль `6ea261adf247cad2421a92fbfd40f363d18d5558`:
+
+- [Quality 36736441485](https://github.com/anton-gorokhovatsky/vera/actions/runs/36736441485) и [Pages 36736441510](https://github.com/anton-gorokhovatsky/vera/actions/runs/36736441510) — success.
+- Оба HTML, CSS, motion.js, favicon и две обложки отвечают HTTP 200, MIME корректен, содержимое побайтово совпадает с dist. Отчёт — `artifacts/palette-1815/public-parity.json`.
+- На Pages проверены RU 320×740 и 1280×900: контакт без ника, Ball Yellow rgb(243,255,0), стекло rgba(252,252,248,.54) с blur 16 px, переходы к контакту и наверх. Переполнение 0, консоль без ошибок и предупреждений.
+- Публичные снимки сохранены в `artifacts/palette-1815/public-desktop.jpg`, `public-contact.jpg`, `public-contact-mobile.jpg`. Документирование результата не меняет опубликованный код.
