@@ -216,7 +216,7 @@ sizeTrail();
 
 // Rotate a continuous seam on a sphere. Clip each crossing at its horizon,
 // so the back of the seam cannot jump across the visible face.
-const seams = [...document.querySelectorAll('#tennis-ball .ball-seam')];
+const seams = [...document.querySelectorAll('#ball-cutouts .ball-seam')];
 function seamProjection(angle) {
   let path = '', previous = null, pen = false;
   const cos = Math.cos(angle), sin = Math.sin(angle);
@@ -267,7 +267,8 @@ function updateFavicon(d) {
   iconContext.beginPath();iconContext.arc(24,24,21,0,Math.PI*2);iconContext.clip();
   iconContext.fillStyle = ballFill;iconContext.fillRect(0,0,48,48);
   iconContext.translate(24,24);iconContext.rotate(-32*Math.PI/180);iconContext.translate(-24,-24);
-  iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 2.1;iconContext.stroke(new Path2D(d));
+  iconContext.globalCompositeOperation = 'destination-out';
+  iconContext.strokeStyle = '#000';iconContext.lineWidth = 2.1;iconContext.lineCap = 'round';iconContext.stroke(new Path2D(d));
   iconContext.restore();
   favicon.type = 'image/png';favicon.href = iconCanvas.toDataURL('image/png');
 }

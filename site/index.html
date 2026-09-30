@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://anton-gorokhovatsky.github.io/vera/">
   <meta property="og:title" content="Вера Дуденкова — большой теннис">
   <meta property="og:description" content="Тренировки в Москве. Увидимся на корте?">
-  <meta property="og:image" content="https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-ru.jpg?v=palette-09">
+  <meta property="og:image" content="https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-ru.jpg?v=cutouts-10">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -24,13 +24,13 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Вера Дуденкова — большой теннис">
   <meta name="twitter:description" content="Тренировки в Москве. Увидимся на корте?">
-  <meta name="twitter:image" content="https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-ru.jpg?v=palette-09">
+  <meta name="twitter:image" content="https://anton-gorokhovatsky.github.io/vera/assets/share-tennis-ru.jpg?v=cutouts-10">
   <meta name="twitter:image:alt" content="Вера Дуденкова с ракеткой на теннисном корте. Большой теннис, Москва. Увидимся на корте?">
-  <link rel="icon" href="./assets/favicon.svg?v=palette-09" type="image/svg+xml">
+  <link rel="icon" href="./assets/favicon.svg?v=cutouts-10" type="image/svg+xml">
   <link rel="preload" href="./assets/fonts/commissioner-regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="./assets/fonts/commissioner-bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./styles.css?v=palette-09">
-  <script src="./motion.js?v=palette-09" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=cutouts-10">
+  <script src="./motion.js?v=cutouts-10" defer></script>
   <script src="./gallery.js?v=court-07" defer></script>
   <script src="./navigation.js?v=controls-08" defer></script>
   <script type="module" src="./weather.js?v=moscow-01"></script>
@@ -40,12 +40,12 @@
 </head>
 <body id="top">
   <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-    <clipPath id="ball-clip"><circle cx="24" cy="24" r="21"/></clipPath>
+    <mask id="ball-cutouts" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48" style="mask-type:luminance">
+      <rect width="48" height="48" fill="#fff"/>
+      <path class="ball-seam" d="M7 5C24 9 24 39 7 43M41 5C24 9 24 39 41 43" fill="none" stroke="#000" stroke-width="2.1" stroke-linecap="round"/>
+    </mask>
     <symbol id="tennis-ball" viewBox="0 0 48 48">
-      <circle cx="24" cy="24" r="21" fill="var(--tennis-fill, var(--ball, #f3ff00))"/>
-      <g clip-path="url(#ball-clip)" fill="none" stroke-linecap="round">
-        <path class="ball-seam" d="M7 5C24 9 24 39 7 43M41 5C24 9 24 39 41 43" stroke="#fffdf0" stroke-width="2.1"/>
-      </g>
+      <circle cx="24" cy="24" r="21" fill="var(--tennis-fill, var(--ball, #f3ff00))" mask="url(#ball-cutouts)"/>
     </symbol>
   </defs></svg>
   <a class="skip-link" href="#main">Перейти к содержанию</a>
