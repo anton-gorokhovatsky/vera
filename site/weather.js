@@ -16,7 +16,6 @@ function renderSky() {
   const forecast = currentForecast(cache?.data, date.getTime());
   const sky = skyState(date, forecast);
   root.dataset.sky = sky;
-  root.style.setProperty('--rally-duration', `${Math.max(4.5, 7 - (forecast?.wind || 0) * .2)}s`);
   clock.textContent = `${chinese ? '莫斯科' : 'Москва'} ${moscowClock(date)}`;
   symbol.textContent = sky === 'night' ? '◔' : /rain|cloud|snow/.test(sky) ? '◒' : '☀';
   if (forecast) {

@@ -21,6 +21,7 @@ function renderMotion() {
   if (!enabled || viewerOpen || inlinePlaying) document.body.classList.remove('has-ball-pointer');
   buttons.forEach(button => {
     button.dataset.playing = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
     button.querySelector('span').textContent = enabled ? (zhMotion ? '暂停动态效果' : 'Остановить движение') : (zhMotion ? '开启动效' : 'Включить движение');
   });
   videos.forEach(video => {
@@ -64,6 +65,7 @@ renderMotion();
 
 // A short exposure trail, only while a fine pointer actually moves.
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+const interactiveTarget = target => target instanceof Element && target.closest('a,button,summary,input,textarea,select,video,[role="button"],[contenteditable="true"]');
 const trail = document.createElement('canvas');
 trail.className = 'cursor-trail';
 trail.setAttribute('aria-hidden', 'true');
@@ -100,10 +102,12 @@ function paintTrail(time) {
   if (trace.length) traceFrame = requestAnimationFrame(paintTrail);
 }
 document.addEventListener('pointermove', event => {
-  if (event.pointerType !== 'mouse' || !enabled || !finePointer.matches || viewerOpen || inlinePlaying || event.target.closest('video')) return;
+  if (interactiveTarget(event.target)) { trace = []; context?.clearRect(0,0,innerWidth,innerHeight); return; }
+  if (event.pointerType !== 'mouse' || !enabled || !finePointer.matches || viewerOpen || inlinePlaying) return;
   const last = trace.at(-1);
   if (last && Math.hypot(event.clientX - last.x, event.clientY - last.y) < 6) return;
   trace.push({x:event.clientX,y:event.clientY,time:performance.now()});
+  wakeBall(.6);
   if (trace.length > 28) trace.shift();
   if (!traceFrame) traceFrame = requestAnimationFrame(paintTrail);
 }, {passive:true});
@@ -117,31 +121,42 @@ pointer.setAttribute('aria-hidden', 'true');
 pointer.innerHTML = '<svg viewBox="0 0 48 48"><use href="#tennis-ball"/></svg>';
 document.body.append(pointer);
 document.addEventListener('pointermove', event => {
-  const show = event.pointerType === 'mouse' && finePointer.matches && enabled && !viewerOpen && !inlinePlaying && !event.target.closest('video');
+  const show = event.pointerType === 'mouse' && finePointer.matches && enabled && !viewerOpen && !inlinePlaying && !interactiveTarget(event.target);
   document.body.classList.toggle('has-ball-pointer', show);
-  if (show) pointer.style.transform = `translate(${event.clientX-12.5}px,${event.clientY-12.5}px)`;
+  if (show) pointer.style.transform = `translate(${event.clientX-9}px,${event.clientY-9}px)`;
 }, {passive:true});
 document.addEventListener('pointerleave', () => document.body.classList.remove('has-ball-pointer'));
 window.addEventListener('blur', () => document.body.classList.remove('has-ball-pointer'));
 
-// A seam on a sphere, projected after rotation. Back-facing portions disappear.
+// Two unbroken liquid ribbons. The circular silhouette stays fixed.
 const seams = [...document.querySelectorAll('#tennis-ball .ball-seam')];
-function seamProjection(angle) {
-  let path = '', pen = false;
-  for (let i = 0; i <= 240; i++) {
-    const t = i / 240 * Math.PI * 2;
-    const depth = .62 * Math.cos(2*t);
-    const norm = Math.hypot(1,depth);
-    const x = Math.cos(t)/norm, y = Math.sin(t)/norm, z = depth/norm;
-    const rx = x*Math.cos(angle)+z*Math.sin(angle), rz = z*Math.cos(angle)-x*Math.sin(angle);
-    if (rz < 0) { pen = false; continue; }
-    const px = 24 + 21*(rx*.94+y*.342), py = 24 + 21*(y*.94-rx*.342);
-    path += `${pen?'L':'M'}${px.toFixed(2)} ${py.toFixed(2)}`;
-    pen = true;
+function liquidSeam(phase) {
+  let path = '';
+  for (const side of [-1,1]) {
+    for (let i = 0; i <= 80; i++) {
+      const t = i / 80, y = -6 + 60*t;
+      const envelope = Math.sin(Math.PI*t);
+      const bend = 11*envelope + 4.5*Math.sin(Math.PI*2*t-phase+side*.7)*envelope;
+      const x = 24 + side*(21-bend) + 2*Math.sin(phase)*envelope;
+      path += `${i?'L':'M'}${x.toFixed(2)} ${y.toFixed(2)}`;
+    }
   }
   return path;
 }
-let rotation = .6, lastSpin = 0;
+let liquidPhase = 0, liquidEnergy = .75, lastSpin = 0;
+function wakeBall(energy = 1) { if (enabled) liquidEnergy = Math.max(liquidEnergy,energy); }
+document.addEventListener('pointerover', event => {
+  const control = interactiveTarget(event.target);
+  if (control && !control.contains(event.relatedTarget)) wakeBall(.9);
+}, {passive:true});
+document.addEventListener('focusin', event => { if (interactiveTarget(event.target)) wakeBall(.9); });
+document.addEventListener('pointerdown', event => { if (interactiveTarget(event.target)) wakeBall(1.5); }, {passive:true});
+document.querySelectorAll('.button svg').forEach(icon => {
+  const ball = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  ball.classList.add('action-ball');
+  ball.setAttribute('cx','12');ball.setAttribute('cy','17');ball.setAttribute('r','4.5');
+  icon.append(ball);
+});
 const favicon = document.querySelector('link[rel="icon"]');
 const staticFavicon = favicon?.getAttribute('href');
 const iconCanvas = document.createElement('canvas');
@@ -153,10 +168,8 @@ function updateFavicon(d) {
   iconContext.clearRect(0,0,48,48);
   iconContext.save();
   iconContext.beginPath();iconContext.arc(24,24,21,0,Math.PI*2);iconContext.clip();
-  const felt = iconContext.createRadialGradient(16,14,1,24,24,25);
-  felt.addColorStop(0,'#e1f47c');felt.addColorStop(1,'#aac448');
-  iconContext.fillStyle = felt;iconContext.fillRect(0,0,48,48);
-  iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 3.2;iconContext.stroke(new Path2D(d));
+  iconContext.fillStyle = '#d6ed65';iconContext.fillRect(0,0,48,48);
+  iconContext.strokeStyle = '#fffdf0';iconContext.lineWidth = 2.8;iconContext.stroke(new Path2D(d));
   iconContext.restore();
   favicon.type = 'image/png';favicon.href = iconCanvas.toDataURL('image/png');
 }
@@ -166,13 +179,17 @@ function restoreFavicon() {
 document.addEventListener('visibilitychange', () => { if (document.hidden) restoreFavicon(); });
 function spinBall(time) {
   if (enabled && !document.hidden && !viewerOpen && !inlinePlaying && time-lastSpin > 40) {
-    rotation += Math.min((time-lastSpin)/1000, .05) * .45;
-    const d = seamProjection(rotation);
-    seams.forEach(path => path.setAttribute('d',d));
-    if (time-lastIcon > 400) { updateFavicon(d); lastIcon = time; }
+    const dt = Math.min((time-lastSpin)/1000, .05);
+    if (liquidEnergy > .005) {
+      liquidPhase += dt * Math.PI/4 * liquidEnergy;
+      liquidEnergy *= Math.exp(-dt * .55);
+      const d = liquidSeam(liquidPhase);
+      seams.forEach(path => path.setAttribute('d',d));
+      if (time-lastIcon > 400) { updateFavicon(d); lastIcon = time; }
+    }
     lastSpin = time;
   } else if (!enabled || document.hidden || viewerOpen || inlinePlaying) { lastSpin = time; if (favicon?.type === 'image/png') restoreFavicon(); }
   requestAnimationFrame(spinBall);
 }
-seams.forEach(path => path.setAttribute('d',seamProjection(rotation)));
+seams.forEach(path => path.setAttribute('d',liquidSeam(liquidPhase)));
 requestAnimationFrame(spinBall);

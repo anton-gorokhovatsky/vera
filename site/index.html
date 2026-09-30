@@ -12,11 +12,11 @@
   <meta property="og:locale" content="ru_RU">
   <meta property="og:title" content="Вера Дуденкова — большой теннис">
   <meta property="og:description" content="Тренировки в Москве. Увидимся на корте?">
-  <link rel="icon" href="./assets/favicon.svg?v=ribbon-02" type="image/svg+xml">
+  <link rel="icon" href="./assets/favicon.svg?v=fluid-04" type="image/svg+xml">
   <link rel="preload" href="./assets/fonts/commissioner-regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="./assets/fonts/commissioner-bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./styles.css?v=breeze-03">
-  <script src="./motion.js?v=breeze-03" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=court-motion-04">
+  <script src="./motion.js?v=court-motion-04" defer></script>
   <script src="./gallery.js?v=inline-02" defer></script>
   <script type="module" src="./weather.js?v=moscow-01"></script>
   <link rel="alternate" hreflang="ru" href="https://anton-gorokhovatsky.github.io/vera/">
@@ -24,13 +24,11 @@
 </head>
 <body id="top">
   <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-    <radialGradient id="ball-felt" cx="32%" cy="25%" r="78%"><stop offset="0" stop-color="#e1f47c"/><stop offset=".62" stop-color="#d6ed65"/><stop offset="1" stop-color="#aac448"/></radialGradient>
     <clipPath id="ball-clip"><circle cx="24" cy="24" r="21"/></clipPath>
     <symbol id="tennis-ball" viewBox="0 0 48 48">
-      <circle cx="24" cy="24" r="21" fill="url(#ball-felt)"/>
+      <circle cx="24" cy="24" r="21" fill="#d6ed65"/>
       <g clip-path="url(#ball-clip)" fill="none" stroke-linecap="round">
-        <path class="ball-seam" d="M3.8 18.2C9.5 7.1 23.5 5.1 29.6 14.8C37.1 26.8 22.1 33.2 22.6 45.2" stroke="#91a73f" stroke-width="4.7"/>
-        <path class="ball-seam" d="M3.8 18.2C9.5 7.1 23.5 5.1 29.6 14.8C37.1 26.8 22.1 33.2 22.6 45.2" stroke="#fffdf0" stroke-width="3.1"/>
+        <path class="ball-seam" d="M4 -4C22 12 22 35 4 52M44 -4C26 12 26 35 44 52" stroke="#fffdf0" stroke-width="2.8"/>
       </g>
     </symbol>
   </defs></svg>
@@ -112,20 +110,13 @@
     </section>
 
     <section class="contact motion-region" id="contact" aria-labelledby="contact-title">
-      <div class="contact-match wrap">
-        <div class="match-art" aria-hidden="true">
-          <div class="match-score"><span class="score-sequence"><span>00</span><span>15</span><span>30</span><span>40</span></span><span class="score-colon">:</span><span>00</span></div>
-          <svg class="match-court" viewBox="0 0 400 560">
-            <g class="court-fill"><path class="court-zone zone-back" d="M68 32h264v126H68z"/><path class="court-zone zone-service" d="M68 158h132v244H68z"/><path class="court-zone zone-side" d="M24 32h44v496H24zM332 32h44v496h-44z"/></g>
-            <g class="court-lines" fill="none"><path d="M24 32h352v496H24zM68 32v496M332 32v496M68 158h264M68 402h264M200 158v244M24 280h352"/></g>
-            <g class="rally-shadow"><circle r="12"/></g><g class="rally-ball"><use href="#tennis-ball" x="-15" y="-15" width="30" height="30"/></g>
-          </svg>
-          <span class="match-flower">✣</span>
-        </div>
-        <div class="contact-message">
+      <div class="contact-court wrap">
+        <div class="contact-heading">
           <p class="eyebrow">Москва · Очные тренировки</p>
           <h2 id="contact-title">Сыграем?</h2>
-          <p class="contact-copy">Напишите мне. Расскажите, играли ли вы раньше и какое время вам удобно.</p>
+        </div>
+        <p class="contact-copy">Напишите мне. Расскажите, играли ли вы раньше и какое время вам удобно.</p>
+        <div class="contact-action">
           <a class="button button-cream" href="https://www.instagram.com/vera_dudenkova/">Написать мне в Instagram <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
           <span class="contact-handle">@vera_dudenkova</span>
         </div>
