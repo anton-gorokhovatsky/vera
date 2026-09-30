@@ -212,3 +212,9 @@
 - Обновлены Open Graph / Twitter image и alt, локализатор и проверка путей. Новые имена `share-tennis-ru.jpg` / `share-tennis-zh.jpg` отделяют исправленные ресурсы от прежних изображений в кэше.
 - Обе композиции просмотрены в браузере при 1200×630 и как превью 320×168. Экспорты — JPEG 1200×630. Локальная консоль без ошибок и предупреждений; `npm run check`, `npm run build` и `git diff --check` успешны.
 - Доказательства — `artifacts/tennis-sharing/`. Проверка ограничена обложками и метаданными; отправка ссылки в мессенджеры не выполнялась.
+
+Публичный контроль `217a98dff95c82f40806c92751477f6d35dd8bb4`:
+
+- [Quality 36723913209](https://github.com/anton-gorokhovatsky/vera/actions/runs/36723913209) и [Pages 36723913166](https://github.com/anton-gorokhovatsky/vera/actions/runs/36723913166) — success.
+- Оба публичных HTML и обе обложки отвечают HTTP 200 с корректным MIME и побайтово совпадают с dist. Отчёт — `artifacts/tennis-sharing/public-parity.json`.
+- Опубликованная русская обложка открыта и осмотрена в браузере; консоль без ошибок и предупреждений, скриншот `artifacts/tennis-sharing/public.png`.
