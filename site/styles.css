@@ -141,7 +141,7 @@
   .poster-feature .poster-media{width:100%;aspect-ratio:16/9;flex:none;margin:0}
   .poster-description{font-size:var(--type-ui);line-height:1.5;max-width:45ch}
   .poster-feature .poster-bottom{margin-top:auto}
-  .poster-invitation{aspect-ratio:auto;gap:24px;container-type:inline-size;--invitation-type:clamp(1rem,14cqi,3.5rem)}
+  .poster-invitation{aspect-ratio:auto;gap:24px;container-type:inline-size;--invitation-type:clamp(.9rem,10.4cqi,3.5rem)}
   .poster-invitation h3{font-size:var(--invitation-type);margin:0;line-height:1;overflow-wrap:normal}
   .poster-invitation .poster-media{width:70%;aspect-ratio:4/5;max-height:none;flex:none;margin:auto}
   .poster-invitation .poster-bottom>svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5}
@@ -214,7 +214,7 @@
   .footer-links{display:flex;flex-direction:column;align-items:center;gap:4px}
   .footer a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none}.footer a:hover{text-decoration:underline}
   .moscow-live{justify-self:start;line-height:1.9;font-variant-numeric:tabular-nums}.weather-reading{display:block;font-size:var(--type-meta)}.weather-symbol{color:var(--ball)}
-  .footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-meta);color:var(--muted);padding-block:12px}.footer-bottom .motion-toggle{font-size:var(--type-meta)}
+  .footer-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 20px;font-size:var(--type-meta);color:var(--muted);padding-block:12px}.footer-bottom .motion-toggle{font-size:var(--type-meta)}
   .ball-pointer{position:fixed;left:0;top:0;width:18px;height:18px;pointer-events:none;z-index:31;display:none;will-change:transform}.has-ball-pointer[data-motion='on'] .ball-pointer{display:block}.ball-pointer svg{width:100%;height:100%;transform:rotate(-32deg)}
   .cursor-trail{position:fixed;inset:0;pointer-events:none;z-index:30;width:100%;height:100%}
   .video-card{position:relative}.inline-trigger{position:absolute;inset:0;z-index:3;border:0;background:transparent;padding:0;color:inherit}.inline-trigger:focus-visible{outline-offset:-5px}.inline-video{display:block;width:100%;height:100%;object-fit:contain;background:#071c12;position:absolute;inset:0}.video-card.is-open .inline-trigger{display:none}.video-card.is-open .archive-image>img,.video-card.is-open .archive-image>.media-badge{visibility:hidden}
