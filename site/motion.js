@@ -1,37 +1,57 @@
-const hero = document.querySelector('.hero');
-const button = document.querySelector('.motion-toggle');
-const label = button.querySelector('span');
-const video = document.querySelector('.hero-video');
-const figure = video.closest('figure');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-let enabled = !reducedMotion.matches && !navigator.connection?.saveData;
-const bounds = hero.getBoundingClientRect();
-let visible = bounds.bottom > 0 && bounds.top < innerHeight;
+const buttons = [...document.querySelectorAll('.motion-toggle')];
+const videos = [...document.querySelectorAll('.ambient-video')];
+const regions = [...document.querySelectorAll('.motion-region')];
+const preference = matchMedia('(prefers-reduced-motion: reduce)');
+const connection = navigator.connection;
+const visible = new Set();
+let enabled = !preference.matches && !connection?.saveData;
+let viewerOpen = false;
+
+function shouldPlay(video) {
+  return enabled && visible.has(video) && !document.hidden && !viewerOpen;
+}
 
 function renderMotion() {
-  const playing = enabled && visible && !document.hidden;
-  hero.dataset.motion = playing ? 'on' : 'off';
-  button.dataset.playing = String(enabled);
-  label.textContent = enabled ? 'Остановить движение' : 'Включить движение';
-  if (playing) {
+  document.body.dataset.motion = enabled ? 'on' : 'off';
+  document.body.dataset.active = String(!document.hidden && !viewerOpen);
+  buttons.forEach(button => {
+    button.dataset.playing = String(enabled);
+    button.querySelector('span').textContent = enabled ? 'Остановить движение' : 'Включить движение';
+  });
+  videos.forEach(video => {
+    if (!shouldPlay(video)) { video.pause(); return; }
     if (!video.getAttribute('src')) video.src = video.dataset.src;
     video.play().then(() => {
-      if (enabled && visible && !document.hidden) figure.classList.add('is-playing');
+      if (shouldPlay(video)) video.classList.add('is-playing');
       else video.pause();
-    }).catch(() => figure.classList.remove('is-playing'));
-  } else {
-    video.pause();
-  }
+    }).catch(() => video.classList.remove('is-playing'));
+  });
 }
 
-button.hidden = false;
-button.addEventListener('click', () => { enabled = !enabled; renderMotion(); });
-reducedMotion.addEventListener('change', (event) => { enabled = !event.matches; renderMotion(); });
-document.addEventListener('visibilitychange', renderMotion);
+buttons.forEach(button => {
+  button.hidden = false;
+  button.addEventListener('click', () => { enabled = !enabled; renderMotion(); });
+});
+videos.forEach(video => {
+  const bounds = video.getBoundingClientRect();
+  if (bounds.bottom > 0 && bounds.top < innerHeight) visible.add(video);
+});
+regions.forEach(region => {
+  const bounds = region.getBoundingClientRect();
+  region.classList.toggle('is-visible', bounds.bottom > 0 && bounds.top < innerHeight);
+});
 if ('IntersectionObserver' in window) {
-  new IntersectionObserver(([entry]) => {
-    visible = entry.isIntersecting;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(({target, isIntersecting}) => {
+      if (isIntersecting) visible.add(target); else visible.delete(target);
+      if (target.classList.contains('motion-region')) target.classList.toggle('is-visible', isIntersecting);
+    });
     renderMotion();
-  }, { threshold: 0 }).observe(hero);
+  }, {threshold: .05});
+  [...videos, ...regions].forEach(target => observer.observe(target));
 }
+preference.addEventListener('change', () => { enabled = !preference.matches && !connection?.saveData; renderMotion(); });
+connection?.addEventListener('change', () => { if (connection.saveData) { enabled = false; renderMotion(); } });
+document.addEventListener('visibilitychange', renderMotion);
+document.addEventListener('media-viewer-change', event => { viewerOpen = event.detail.open; renderMotion(); });
 renderMotion();
