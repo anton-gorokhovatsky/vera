@@ -27,6 +27,7 @@ function display(index) {
   note.hidden = !card.dataset.note;
   const image = document.createElement('img');
   image.alt = card.dataset.alt;
+  image.addEventListener('load', () => image.classList.add('serve-in'), {once:true});
   image.src = card.href;
   stage.replaceChildren(image);
 }
@@ -55,7 +56,7 @@ allCards.filter(card => card.dataset.kind === 'video').forEach(link => {
   button.setAttribute('aria-label', `${zh ? '播放：' : 'Воспроизвести: '}${link.dataset.title}`);
   card.append(button);
   let video;
-  button.addEventListener('click', () => {
+  button.addEventListener('click', event => {
     if (!video) {
       video = document.createElement('video');
       video.className = 'inline-video';
@@ -84,6 +85,12 @@ allCards.filter(card => card.dataset.kind === 'video').forEach(link => {
     }
     card.querySelectorAll('.ambient-video').forEach(v => v.pause());
     card.classList.add('is-open');
+    const bounds = frame.getBoundingClientRect();
+    const x = event.detail ? (event.clientX - bounds.left) / bounds.width * 100 : 50;
+    const y = event.detail ? (event.clientY - bounds.top) / bounds.height * 100 : 82;
+    video.style.setProperty('--serve-x', `${Math.max(15,Math.min(85,x))}%`);
+    video.style.setProperty('--serve-y', `${Math.max(35,Math.min(85,y))}%`);
+    video.classList.add('serve-in');
     video.play().catch(() => {});
     video.focus({preventScroll:true});
   });
@@ -92,8 +99,31 @@ allCards.filter(card => card.dataset.kind === 'video').forEach(link => {
 const playbackObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
   entries.forEach(({target,isIntersecting}) => { if (!isIntersecting) target.querySelector('.inline-video')?.pause(); });
 }, {threshold: .05}) : null;
-document.querySelector('.gallery-more').addEventListener('toggle', event => {
-  if (!event.target.open) event.target.querySelectorAll('.inline-video').forEach(video => video.pause());
+const archive = document.querySelector('.gallery-more');
+const archiveCards = [...archive.querySelectorAll('.archive-card')];
+const arrivalObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(({target,isIntersecting}) => {
+    if (!isIntersecting || !archive.open) return;
+    target.classList.add('ball-arrived');
+    arrivalObserver.unobserve(target);
+  });
+}, {threshold:.12}) : null;
+function observeArchive() {
+  const columns = getComputedStyle(archive.querySelector('.archive-grid')).gridTemplateColumns.split(' ').length;
+  archiveCards.forEach((card,i) => {
+    card.style.setProperty('--arrival-delay', `${i % columns * 85}ms`);
+    if (arrivalObserver) arrivalObserver.observe(card);
+    else card.classList.add('ball-arrived');
+  });
+}
+if (archive.open) observeArchive();
+archive.addEventListener('toggle', () => {
+  if (archive.open) observeArchive();
+  else {
+    archive.querySelectorAll('.inline-video').forEach(video => video.pause());
+    arrivalObserver?.disconnect();
+    archiveCards.forEach(card => card.classList.remove('ball-arrived'));
+  }
 });
 if (typeof dialog.showModal === 'function') {
   [...cards, ...document.querySelectorAll('[data-gallery-target]')].forEach(link => {

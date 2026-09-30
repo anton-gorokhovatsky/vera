@@ -15,9 +15,9 @@
   <link rel="icon" href="../assets/favicon.svg?v=fluid-04" type="image/svg+xml">
   <link rel="preload" href="../assets/fonts/commissioner-regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../assets/fonts/commissioner-bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../styles.css?v=court-motion-04">
-  <script src="../motion.js?v=court-motion-04" defer></script>
-  <script src="../gallery.js?v=inline-02" defer></script>
+  <link rel="stylesheet" href="../styles.css?v=court-motion-05">
+  <script src="../motion.js?v=court-motion-05" defer></script>
+  <script src="../gallery.js?v=court-motion-05" defer></script>
   <script type="module" src="../weather.js?v=moscow-01"></script>
   <link rel="alternate" hreflang="ru" href="https://anton-gorokhovatsky.github.io/vera/">
   <link rel="alternate" hreflang="zh-Hans" href="https://anton-gorokhovatsky.github.io/vera/zh/">
@@ -62,7 +62,7 @@
           <h3>我的<br>发球。</h3>
           <div class="poster-bottom"><span>播放视频</span><span class="media-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7z"/></svg><span>0:03</span></span></div>
         </a>
-            <a class="media-link poster poster-grass" href="../assets/gallery/tennis-23.webp" data-media-id="tennis-23" data-kind="image" data-title="球网旁的球拍" data-source="https://www.instagram.com/stories/highlights/18025220059563084/" data-note="" data-alt="室内球场球网旁，放在球筐上的球拍" aria-label="查看：球网旁的球拍">
+            <a class="media-link poster poster-court" href="../assets/gallery/tennis-23.webp" data-media-id="tennis-23" data-kind="image" data-title="球网旁的球拍" data-source="https://www.instagram.com/stories/highlights/18025220059563084/" data-note="" data-alt="室内球场球网旁，放在球筐上的球拍" aria-label="查看：球网旁的球拍">
           <div class="poster-top"><span>维拉·杜登科娃</span><svg class="tennis-mark" viewBox="0 0 48 48" aria-hidden="true"><use href="#tennis-ball"/></svg></div>
           <div class="poster-media"><img src="../assets/gallery/thumbs/tennis-23.webp" width="480" height="853" alt="室内球场球网旁，放在球筐上的球拍" loading="lazy" decoding="async"></div>
           <h3>我的<br>网球。</h3>
@@ -124,10 +124,14 @@
       <div class="contact-controls wrap"><button class="motion-toggle" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path class="pause-icon" d="M7 5v10M13 5v10"/><path class="play-icon" d="m7 4 8 6-8 6z"/></svg><span>暂停动态效果</span></button></div>
     </section>
   </main>
-  <footer class="footer">
-    <div class="footer-meta wrap"><p>维拉·杜登科娃<br><span>网球</span></p><p class="moscow-live"><span class="weather-symbol" aria-hidden="true">◒</span> <span data-moscow-clock>莫斯科</span><span class="weather-reading" data-weather-reading></span></p><div class="footer-links"><a class="language-link" href="../" lang="ru" hreflang="ru">RU</a><a href="#top">回到顶部 ↑</a></div></div>
-    <a class="footer-wordmark wrap" href="#top" aria-label="维拉·杜登科娃 — 返回顶部"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="#tennis-ball"/></svg><span>vera.</span></a>
-    <div class="footer-bottom wrap"><span>莫斯科，55.75° N · 37.62° E</span><a class="weather-source" href="https://api.met.no/doc/License" hidden>天气 · MET Norway · CC BY 4.0</a><span class="footer-sign" aria-hidden="true">✣</span></div>
+  <footer class="footer" id="footer">
+    <div class="footer-meta wrap">
+      <svg class="footer-emblem" viewBox="0 0 48 48" aria-hidden="true"><use href="#tennis-ball"/></svg>
+      <p class="footer-identity">维拉·杜登科娃<br><span>网球</span></p>
+      <p class="moscow-live"><span class="weather-symbol" aria-hidden="true">◒</span> <span data-moscow-clock>莫斯科</span><span class="weather-reading" data-weather-reading></span></p>
+      <div class="footer-links"><a class="language-link" href="../" lang="ru" hreflang="ru">RU</a><a href="#top">回到顶部 ↑</a></div>
+    </div>
+    <div class="footer-bottom wrap"><span>莫斯科，55.75° N · 37.62° E</span><a class="weather-source" href="https://api.met.no/doc/License" hidden>天气 · MET Norway · CC BY 4.0</a></div>
   </footer>
 
   <dialog class="media-viewer" aria-labelledby="viewer-title">
