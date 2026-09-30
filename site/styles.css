@@ -141,8 +141,8 @@
   .poster-feature .poster-media{width:100%;aspect-ratio:16/9;flex:none;margin:0}
   .poster-description{font-size:var(--type-ui);line-height:1.5;max-width:45ch}
   .poster-feature .poster-bottom{margin-top:auto}
-  .poster-invitation{aspect-ratio:auto;gap:24px;container-type:inline-size;--invitation-type:clamp(.9rem,10.4cqi,3.5rem)}
-  .poster-invitation h3{font-size:var(--invitation-type);margin:0;line-height:1;overflow-wrap:normal}
+  .poster-invitation{aspect-ratio:auto;gap:24px;container-type:inline-size;--invitation-type:clamp(1.5rem,15cqi,3.5rem)}
+  .poster-invitation h3{font-size:var(--invitation-type);margin:0;line-height:1.04;overflow-wrap:normal}
   .poster-invitation .poster-media{width:70%;aspect-ratio:4/5;max-height:none;flex:none;margin:auto}
   .poster-invitation .poster-bottom>svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5}
   .poster-invitation:is(:hover,:focus-visible) .poster-bottom{color:var(--ball)}
