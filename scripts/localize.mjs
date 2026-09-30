@@ -10,6 +10,8 @@ html = html.replace('property="og:locale:alternate" content="zh_CN"','property="
 const languageLink = '<a class="language-link" href="./zh/" lang="zh-Hans" hreflang="zh-Hans">中文</a>';
 html = html.replaceAll(languageLink,'<a class="language-link" href="./" lang="ru" hreflang="ru">RU</a>');
 for (const [ru,zh] of Object.entries(translations).sort(([a],[b])=>b.length-a.length)) html = html.replaceAll(ru,zh);
+// Each candidate in a responsive image has its own relative URL.
+html = html.replace(/srcset="([^"]+)"/g, (_, sources) => `srcset="${sources.replaceAll('./assets/', '../assets/')}"`);
 html = html.replaceAll('"./','"../');
 if (/[А-Яа-яЁё]/.test(html)) throw new Error('Untranslated Russian text remains in Chinese HTML');
 if (process.argv.includes('--check')) {

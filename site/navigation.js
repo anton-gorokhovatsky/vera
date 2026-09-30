@@ -1,5 +1,84 @@
-// Keep the desktop links as the no-script fallback; enhance only small screens.
+// Ordinary anchor links remain usable without JavaScript.
 (() => {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let flight = null;
+
+  function cancelFlight() {
+    if (flight) cancelAnimationFrame(flight.frame);
+    flight = null;
+  }
+  function sectionTop(section) {
+    const inset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingBlockStart) || 0;
+    const margin = parseFloat(getComputedStyle(section).scrollMarginBlockStart) || 0;
+    const maximum = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    return Math.max(0, Math.min(maximum, section.getBoundingClientRect().top + scrollY - inset - margin));
+  }
+  function focusSection(section) {
+    const target = section === document.body ? document.querySelector('.wordmark') : section.querySelector('h1,h2') || section;
+    if (!target) return;
+    const temporary = !target.hasAttribute('tabindex') && !target.matches('a[href],button,input,select,textarea');
+    if (temporary) {
+      target.setAttribute('tabindex', '-1');
+      target.addEventListener('blur', () => target.removeAttribute('tabindex'), {once: true});
+    }
+    target.focus({preventScroll: true});
+  }
+  function anchorSection(link) {
+    if (!link?.getAttribute('href')?.startsWith('#') || !link.hash) return null;
+    try { return document.getElementById(decodeURIComponent(link.hash.slice(1))); }
+    catch { return null; }
+  }
+  function followAnchor(link) {
+    const section = anchorSection(link);
+    if (!section) return;
+    cancelFlight();
+    const from = scrollY, to = sectionTop(section), distance = to - from;
+    if (location.hash !== link.hash) history.pushState(null, '', link.hash);
+    const animated = document.body.dataset.motion === 'on' && !reduced.matches && !navigator.connection?.saveData;
+    if (!animated || Math.abs(distance) < 8) {
+      window.scrollTo({top: to, behavior: 'instant'});
+      focusSection(section);
+      return;
+    }
+    const duration = Math.min(1050, Math.max(460, 360 + 180 * Math.sqrt(Math.abs(distance) / innerHeight)));
+    const current = {frame: 0, start: performance.now()};
+    flight = current;
+    function advance(time) {
+      if (flight !== current) return;
+      const t = Math.min(1, (time - current.start) / duration);
+      // A single flight: build speed, then lose it smoothly before landing.
+      // Zero velocity and acceleration at both ends; no viewport rebound.
+      const progress = t * t * t * (10 + t * (-15 + 6 * t));
+      window.scrollTo({top: from + distance * progress, behavior: 'instant'});
+      if (t < 1) current.frame = requestAnimationFrame(advance);
+      else {
+        flight = null;
+        window.scrollTo({top: sectionTop(section), behavior: 'instant'});
+        focusSection(section);
+      }
+    }
+    current.frame = requestAnimationFrame(advance);
+  }
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.matches('.skip-link,[download]') || (link.target && link.target !== '_self') || !anchorSection(link)) return;
+    event.preventDefault();
+    followAnchor(link);
+  });
+  // Intercept only requested anchor journeys, never wheel or touch scrolling.
+  ['wheel','touchstart','pointerdown'].forEach(type => window.addEventListener(type, cancelFlight, {passive: true}));
+  document.addEventListener('keydown', event => {
+    if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Escape','Tab'].includes(event.key)) cancelFlight();
+  });
+  ['popstate','hashchange','resize'].forEach(type => window.addEventListener(type, cancelFlight));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelFlight(); });
+  document.addEventListener('navigation-change', event => { if (event.detail.open) cancelFlight(); });
+  reduced.addEventListener('change', cancelFlight);
+  new MutationObserver(() => {
+    if (document.body.dataset.motion !== 'on') cancelFlight();
+  }).observe(document.body, {attributes: true, attributeFilter: ['data-motion']});
+
   const trigger = document.querySelector('.menu-toggle');
   const source = document.querySelector('.header nav');
   if (!trigger || !source || typeof HTMLDialogElement === 'undefined') return;
@@ -55,17 +134,16 @@
   panel.addEventListener('close', () => {
     signal(false);
     if (destination) {
-      destination.setAttribute('tabindex', '-1');
-      destination.focus({preventScroll: true});
+      followAnchor(destination);
       destination = null;
     } else if (mobile.matches) trigger.focus({preventScroll: true});
     else document.querySelector('.wordmark').focus({preventScroll: true});
   });
   links.addEventListener('click', event => {
     const link = event.target.closest('a');
-    if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const section = document.querySelector(link.hash);
-    destination = section?.querySelector('h2') || section;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !anchorSection(link)) return;
+    event.preventDefault();
+    destination = link;
     panel.close();
   });
   mobile.addEventListener('change', () => { if (!mobile.matches && panel.open) panel.close(); });

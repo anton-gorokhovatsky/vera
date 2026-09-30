@@ -55,7 +55,7 @@ async function inspect(directory) {
       try { await stat(path.join(root, `assets/share-tennis-${locale}.jpg`)); } catch { failures.push(`${name}: sharing image missing`); }
     }
 
-    for (const match of html.matchAll(/<(?:a|img|link|script|video)\b[^>]*>/g)) {
+    for (const match of html.matchAll(/<(?:a|figure|img|link|script|video)\b[^>]*>/g)) {
       const tag = match[0];
       const a = attrs(tag);
       if (a['data-media-id']) { mediaIds.push(`${name}:${a['data-media-id']}`); mediaKinds.push(a['data-kind']); }
@@ -69,7 +69,8 @@ async function inspect(directory) {
         check(/\bmuted\b/.test(tag) && /\bplaysinline\b/.test(tag), `${name}: decorative video must be silent and inline`);
         check(a.preload === 'none' && !/\bautoplay\b/.test(tag), `${name}: motion must respect the visitor's preference before downloading video`);
       }
-      for (const url of [a.href, a.src, a['data-src'], a['data-inline-src'], a.poster, a['data-poster']].filter(Boolean)) {
+      const candidates = (a.srcset || '').split(',').map(candidate => candidate.trim().split(/\s+/)[0]).filter(Boolean);
+      for (const url of [a.href, a.src, a['data-src'], a['data-inline-src'], a.poster, a['data-poster'], ...candidates].filter(Boolean)) {
       check(!/^(javascript:|http:|\/\/)/i.test(url), `${name}: unsafe or insecure URL ${url}`);
       if (/^https:/.test(url)) continue;
       if (url.startsWith('#')) {
