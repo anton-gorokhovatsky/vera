@@ -69,7 +69,7 @@
   .menu-toggle,.menu-close{align-items:center;justify-content:space-between;gap:12px;min-height:48px;border:0;background:none;color:inherit;padding:0;font-size:var(--type-ui);line-height:1.25}
   .menu-toggle svg,.menu-close svg{width:24px;height:24px;flex:none;translate:0 .1em;fill:none;stroke:currentColor;stroke-width:1.5}
   .menu-toggle:is(:hover,:focus-visible){color:var(--ball)}
-  .mobile-menu{--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:28px;background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
+  .mobile-menu{--menu-radius:28px;--menu-action-inset:12px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
   .mobile-menu[open]{display:block}
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.mobile-menu{background:var(--nav-surface);-webkit-backdrop-filter:blur(24px) saturate(1.1);backdrop-filter:blur(24px) saturate(1.1)}}
   .mobile-menu::backdrop{background:rgb(5 24 12 / .18)}
@@ -82,9 +82,9 @@
   .menu-sections{display:grid;gap:4px;padding-block:28px 24px}
   .menu-sections a{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding-block:12px;font-size:clamp(1.5rem,calc(1rem + 4.5vw),3rem);font-weight:700;line-height:1.12;letter-spacing:-.045em;text-transform:uppercase;text-decoration:none}
   .menu-sections a:not(.menu-contact):is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:2px}
-  .menu-contact{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;margin-top:16px;padding:16px 20px;border-radius:32px;background:var(--ball);color:var(--ink);font-size:1rem;font-weight:500;line-height:1.35;letter-spacing:-.015em;text-decoration:none;--focus:var(--nav-text)}
+  .menu-contact{--action-radius:calc(var(--menu-radius) - var(--menu-action-inset));display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;margin-top:16px;margin-inline:calc(var(--menu-action-inset) - var(--menu-inset));margin-bottom:calc(var(--menu-action-inset) - var(--menu-inset));padding:16px 18px;border-radius:var(--action-radius);background:var(--ball);color:var(--ink);font-size:.9375rem;font-weight:500;line-height:1.4;letter-spacing:-.01em;text-decoration:none;--focus:var(--nav-text)}
   .menu-contact:is(:hover,:focus-visible){background:var(--fresh)}
-  .menu-contact svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .menu-contact svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .menu-sections a:active,.menu-contact:active,.menu-close:active{opacity:.7}
   .menu-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-ui);line-height:1.45}
   .menu-foot p{min-width:0;max-width:25ch}
@@ -113,8 +113,9 @@
       border-radius:0;clip-path:var(--smooth-contour)
     }
     .mobile-menu{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M40 0H60C64.8 0 82.4 0 91.2 8.8C100 17.6 100 35.2 100 40V60C100 64.8 100 82.4 91.2 91.2C82.4 100 64.8 100 60 100H40C35.2 100 17.6 100 8.8 91.2C0 82.4 0 64.8 0 60V40C0 35.2 0 17.6 8.8 8.8C17.6 0 35.2 0 40 0Z' fill='none' stroke='white' stroke-opacity='.32' stroke-width='2'/%3E%3C/svg%3E") 40 / 40px / 0 stretch}
-    .menu-contact{--corner-y:30px}
-    .mobile-menu .menu-contact:focus-visible{outline-offset:-6px;border-radius:22px}
+    .menu-contact{position:relative;--corner-x:calc(var(--action-radius)*1.375);--corner-y:var(--corner-x)}
+    .mobile-menu .menu-contact:focus-visible{outline:none}
+    .menu-contact:focus-visible::after{content:'';position:absolute;inset:4px;border:2px solid var(--focus);border-radius:calc(var(--action-radius) - 4px);pointer-events:none}
   }
   body[data-motion='on'] .mobile-menu[open]{animation:menu-arrive .24s var(--ball-flight) both}
   @keyframes menu-arrive{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -322,5 +323,5 @@
   }
   @media(max-width:360px){:root{--gutter:14px;--gap:16px}.header nav{gap:12px;font-size:var(--type-ui)}.hero-foot>.button{width:100%}.poster{padding:20px}.poster-feature .poster-media,.poster-feature.video-card.is-open .poster-media{width:calc(100% + 40px);margin-inline:-20px}.story-heading,.qualification{padding-inline:20px}.story-copy,.portrait{padding-inline:20px}}
   @media(prefers-reduced-motion:reduce){.mobile-menu,.gallery-more>.archive-grid,.action-ball,.archive-image,.poster-media>img,.poster-media>.ambient-video,.archive-image>img,.serve-in,.media-badge svg{animation:none!important}.action-ball{display:none!important}.button svg>path{opacity:1!important}.cursor-trail{display:none!important}*{transition:none!important}.tennis-mark{transform:rotate(-18deg)!important}.button:hover{transform:none}}
-  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact{clip-path:none;border-radius:24px;background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
+  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact{clip-path:none;border-radius:16px;background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
 }
