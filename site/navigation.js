@@ -100,15 +100,15 @@
   const language = links.querySelector('.language-link');
   const contact = links.querySelector('[href="#contact"]');
   const contactLabel = document.createElement('span');
-  contactLabel.textContent = trigger.dataset.menuContact;
-  contact.replaceChildren(contactLabel, contact.querySelector('svg'));
+  contactLabel.textContent = contact.textContent.trim().replace(/^На\s+/u, 'На\u00a0');
+  contact.replaceChildren(contact.querySelector('svg'), contactLabel);
   contact.classList.add('menu-contact');
   const foot = document.createElement('div');
   foot.className = 'menu-foot';
   const place = document.createElement('p');
   place.textContent = trigger.dataset.menuPlace;
   foot.append(place, language);
-  panel.append(links, foot, contact);
+  panel.append(links, foot);
   document.body.append(panel);
   document.body.classList.add('has-mobile-menu');
   trigger.hidden = false;

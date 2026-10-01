@@ -45,7 +45,7 @@
   .skip-link:focus{transform:none}
 }
 @layer components{
-  :root{--ball-rise:cubic-bezier(0,.55,.45,1);--ball-fall:cubic-bezier(.55,0,1,.45);--ball-flight:cubic-bezier(.12,.72,.22,1);--type-ui:.875rem;--type-meta:.75rem;--court-inset:clamp(24px,3vw,48px);--section-space:clamp(48px,7vw,112px)}
+  :root{--ball-rise:cubic-bezier(0,.55,.45,1);--ball-fall:cubic-bezier(.55,0,1,.45);--ball-flight:cubic-bezier(.12,.72,.22,1);--type-ui:.875rem;--type-meta:.75rem;--type-menu:clamp(1.375rem,calc(.375rem + 5vw),2.125rem);--court-inset:clamp(24px,3vw,48px);--section-space:clamp(48px,7vw,112px)}
   .hero{position:relative;isolation:isolate;display:flex;flex-direction:column;min-height:min(900px,100svh);background:#174a31}
   .grass-motion{position:absolute;inset:0;z-index:-2;overflow:hidden}
   .grass-motion img,.grass-motion video{width:100%;height:100%;object-fit:cover;object-position:center 42%;position:absolute;inset:0}
@@ -69,7 +69,7 @@
   .menu-toggle,.menu-close{align-items:center;justify-content:space-between;gap:12px;min-height:48px;border:0;background:none;color:inherit;padding:0;font-size:var(--type-ui);line-height:1.25}
   .menu-toggle svg,.menu-close svg{width:24px;height:24px;flex:none;translate:0 .1em;fill:none;stroke:currentColor;stroke-width:1.5}
   .menu-toggle:is(:hover,:focus-visible){color:var(--ball)}
-  .mobile-menu{--menu-radius:28px;--menu-action-inset:12px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
+  .mobile-menu{--menu-radius:28px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
   .mobile-menu[open]{display:block}
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.mobile-menu{background:var(--nav-surface);-webkit-backdrop-filter:blur(24px) saturate(1.1);backdrop-filter:blur(24px) saturate(1.1)}}
   .mobile-menu::backdrop{background:rgb(5 24 12 / .18)}
@@ -79,23 +79,24 @@
   .menu-close{display:flex;justify-content:center;gap:0;flex:none;width:48px;min-height:48px;border-radius:50%}
   .menu-close svg{translate:none}
   .menu-close:is(:hover,:focus-visible){background:var(--nav-hover)}
-  .menu-sections{display:grid;gap:4px;padding-block:28px 24px}
-  .menu-sections a{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding-block:12px;font-size:clamp(1.5rem,calc(1rem + 4.5vw),3rem);font-weight:700;line-height:1.12;letter-spacing:-.045em;text-transform:uppercase;text-decoration:none}
-  .menu-sections a:not(.menu-contact):is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:2px}
-  .menu-contact{--action-radius:calc(var(--menu-radius) - var(--menu-action-inset));display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;margin-top:16px;margin-inline:calc(var(--menu-action-inset) - var(--menu-inset));margin-bottom:calc(var(--menu-action-inset) - var(--menu-inset));padding:16px 18px;border-radius:var(--action-radius);background:var(--ball);color:var(--ink);font-size:.9375rem;font-weight:500;line-height:1.4;letter-spacing:-.01em;text-decoration:none;--focus:var(--nav-text)}
-  .menu-contact:is(:hover,:focus-visible){background:var(--fresh)}
-  .menu-contact svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-  .menu-sections a:active,.menu-contact:active,.menu-close:active{opacity:.7}
+  .menu-sections{display:grid;padding-block:20px 16px}
+  .menu-sections a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding-block:max(12px,.4em);font-size:var(--type-menu);font-weight:700;line-height:1.15;letter-spacing:-.04em;text-transform:uppercase;text-decoration:none;text-wrap:balance;hyphens:auto}
+  .menu-sections a:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:2px}
+  .menu-sections .menu-contact{display:flow-root;line-height:max(1.15em,36px);text-wrap:wrap}
+  .menu-contact span{overflow-wrap:anywhere}
+  .menu-contact svg{float:inline-end;width:36px;height:36px;margin-inline-start:12px;padding:8px;border-radius:50%;background:var(--ball);color:var(--ink);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .menu-contact:is(:hover,:focus-visible) svg{background:var(--fresh)}
+  .menu-sections a:active,.menu-close:active{opacity:.7}
   .menu-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-ui);line-height:1.45}
   .menu-foot p{min-width:0;max-width:25ch}
   .menu-foot a{display:grid;place-items:center;flex:none;min-width:48px;min-height:48px;padding:8px;border-radius:24px;text-decoration:none}
   .menu-foot a:is(:hover,:focus-visible){background:var(--nav-hover)}
   .mobile-menu :is(button,a):focus-visible{outline-width:2px;outline-offset:4px}
   .menu-sections:lang(zh) a{letter-spacing:0}
-  /* Two tangent cubic segments per corner: curvature starts at zero on the straight edge.
+  /* Two tangent cubic segments per panel corner: curvature starts at zero on the straight edge.
      shape() also works in Safari 18.4+, where corner-shape is not yet a stable feature. */
   @supports (clip-path:shape(from 0 0,line to 100% 0,line to 100% 100%,close)){
-    .mobile-menu,.menu-contact{
+    .mobile-menu{
       --corner-x:40px;--corner-y:40px;
       --smooth-contour:shape(from var(--corner-x) 0,
         line to calc(100% - var(--corner-x)) 0,
@@ -113,9 +114,6 @@
       border-radius:0;clip-path:var(--smooth-contour)
     }
     .mobile-menu{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M40 0H60C64.8 0 82.4 0 91.2 8.8C100 17.6 100 35.2 100 40V60C100 64.8 100 82.4 91.2 91.2C82.4 100 64.8 100 60 100H40C35.2 100 17.6 100 8.8 91.2C0 82.4 0 64.8 0 60V40C0 35.2 0 17.6 8.8 8.8C17.6 0 35.2 0 40 0Z' fill='none' stroke='white' stroke-opacity='.32' stroke-width='2'/%3E%3C/svg%3E") 40 / 40px / 0 stretch}
-    .menu-contact{position:relative;--corner-x:calc(var(--action-radius)*1.375);--corner-y:var(--corner-x)}
-    .mobile-menu .menu-contact:focus-visible{outline:none}
-    .menu-contact:focus-visible::after{content:'';position:absolute;inset:4px;border:2px solid var(--focus);border-radius:calc(var(--action-radius) - 4px);pointer-events:none}
   }
   body[data-motion='on'] .mobile-menu[open]{animation:menu-arrive .24s var(--ball-flight) both}
   @keyframes menu-arrive{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -323,5 +321,5 @@
   }
   @media(max-width:360px){:root{--gutter:14px;--gap:16px}.header nav{gap:12px;font-size:var(--type-ui)}.hero-foot>.button{width:100%}.poster{padding:20px}.poster-feature .poster-media,.poster-feature.video-card.is-open .poster-media{width:calc(100% + 40px);margin-inline:-20px}.story-heading,.qualification{padding-inline:20px}.story-copy,.portrait{padding-inline:20px}}
   @media(prefers-reduced-motion:reduce){.mobile-menu,.gallery-more>.archive-grid,.action-ball,.archive-image,.poster-media>img,.poster-media>.ambient-video,.archive-image>img,.serve-in,.media-badge svg{animation:none!important}.action-ball{display:none!important}.button svg>path{opacity:1!important}.cursor-trail{display:none!important}*{transition:none!important}.tennis-mark{transform:rotate(-18deg)!important}.button:hover{transform:none}}
-  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact{clip-path:none;border-radius:16px;background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
+  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact svg{background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
 }
