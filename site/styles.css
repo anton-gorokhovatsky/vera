@@ -69,7 +69,7 @@
   .menu-toggle,.menu-close{align-items:center;justify-content:space-between;gap:12px;min-height:48px;border:0;background:none;color:inherit;padding:0;font-size:var(--type-ui);line-height:1.25}
   .menu-toggle svg,.menu-close svg{width:24px;height:24px;flex:none;translate:0 .1em;fill:none;stroke:currentColor;stroke-width:1.5}
   .menu-toggle:is(:hover,:focus-visible){color:var(--ball)}
-  .mobile-menu{--menu-radius:28px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
+  .mobile-menu{--menu-radius:32px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
   .mobile-menu[open]{display:block}
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.mobile-menu{background:var(--nav-surface);-webkit-backdrop-filter:blur(24px) saturate(1.1);backdrop-filter:blur(24px) saturate(1.1)}}
   .mobile-menu::backdrop{background:rgb(5 24 12 / .18)}
@@ -93,27 +93,33 @@
   .menu-foot a:is(:hover,:focus-visible){background:var(--nav-hover)}
   .mobile-menu :is(button,a):focus-visible{outline-width:2px;outline-offset:4px}
   .menu-sections:lang(zh) a{letter-spacing:0}
-  /* Two tangent cubic segments per panel corner: curvature starts at zero on the straight edge.
-     shape() also works in Safari 18.4+, where corner-shape is not yet a stable feature. */
-  @supports (clip-path:shape(from 0 0,line to 100% 0,line to 100% 100%,close)){
+  /* Widget-style continuous corners: a cubic curvature ramp, a circular arc,
+     and the mirrored ramp. The ramps meet the straight edge at zero curvature
+     and the arc at 1/r. Border and clipping share the same geometry. */
+  @supports (clip-path:shape(from 0 0,arc to 20px 20px of 20px cw,close)){
     .mobile-menu{
-      --corner-x:40px;--corner-y:40px;
-      --smooth-contour:shape(from var(--corner-x) 0,
-        line to calc(100% - var(--corner-x)) 0,
-        curve to calc(100% - var(--corner-x)*.22) calc(var(--corner-y)*.22) with calc(100% - var(--corner-x)*.88) 0 / calc(100% - var(--corner-x)*.44) 0,
-        curve to 100% var(--corner-y) with 100% calc(var(--corner-y)*.44) / 100% calc(var(--corner-y)*.88),
-        line to 100% calc(100% - var(--corner-y)),
-        curve to calc(100% - var(--corner-x)*.22) calc(100% - var(--corner-y)*.22) with 100% calc(100% - var(--corner-y)*.88) / 100% calc(100% - var(--corner-y)*.44),
-        curve to calc(100% - var(--corner-x)) 100% with calc(100% - var(--corner-x)*.44) 100% / calc(100% - var(--corner-x)*.88) 100%,
-        line to var(--corner-x) 100%,
-        curve to calc(var(--corner-x)*.22) calc(100% - var(--corner-y)*.22) with calc(var(--corner-x)*.88) 100% / calc(var(--corner-x)*.44) 100%,
-        curve to 0 calc(100% - var(--corner-y)) with 0 calc(100% - var(--corner-y)*.44) / 0 calc(100% - var(--corner-y)*.88),
-        line to 0 var(--corner-y),
-        curve to calc(var(--corner-x)*.22) calc(var(--corner-y)*.22) with 0 calc(var(--corner-y)*.88) / 0 calc(var(--corner-y)*.44),
-        curve to var(--corner-x) 0 with calc(var(--corner-x)*.44) 0 / calc(var(--corner-x)*.88) 0,close);
-      border-radius:0;clip-path:var(--smooth-contour)
+      --menu-corner:calc(var(--menu-radius)*1.6);
+      --smooth-contour:shape(from calc(var(--menu-radius)*1.6) 0,
+        line to calc(100% - var(--menu-radius)*1.6) 0,
+        curve to calc(100% - var(--menu-radius)*0.5460095) calc(var(--menu-radius)*0.1089935) with calc(100% - var(--menu-radius)*0.9503585) 0 / calc(100% - var(--menu-radius)*0.7599212) 0,
+        arc to calc(100% - var(--menu-radius)*0.1089935) calc(var(--menu-radius)*0.5460095) of var(--menu-radius) cw,
+        curve to 100% calc(var(--menu-radius)*1.6) with 100% calc(var(--menu-radius)*0.7599212) / 100% calc(var(--menu-radius)*0.9503585),
+        line to 100% calc(100% - var(--menu-radius)*1.6),
+        curve to calc(100% - var(--menu-radius)*0.1089935) calc(100% - var(--menu-radius)*0.5460095) with 100% calc(100% - var(--menu-radius)*0.9503585) / 100% calc(100% - var(--menu-radius)*0.7599212),
+        arc to calc(100% - var(--menu-radius)*0.5460095) calc(100% - var(--menu-radius)*0.1089935) of var(--menu-radius) cw,
+        curve to calc(100% - var(--menu-radius)*1.6) 100% with calc(100% - var(--menu-radius)*0.7599212) 100% / calc(100% - var(--menu-radius)*0.9503585) 100%,
+        line to calc(var(--menu-radius)*1.6) 100%,
+        curve to calc(var(--menu-radius)*0.5460095) calc(100% - var(--menu-radius)*0.1089935) with calc(var(--menu-radius)*0.9503585) 100% / calc(var(--menu-radius)*0.7599212) 100%,
+        arc to calc(var(--menu-radius)*0.1089935) calc(100% - var(--menu-radius)*0.5460095) of var(--menu-radius) cw,
+        curve to 0 calc(100% - var(--menu-radius)*1.6) with 0 calc(100% - var(--menu-radius)*0.7599212) / 0 calc(100% - var(--menu-radius)*0.9503585),
+        line to 0 calc(var(--menu-radius)*1.6),
+        curve to calc(var(--menu-radius)*0.1089935) calc(var(--menu-radius)*0.5460095) with 0 calc(var(--menu-radius)*0.9503585) / 0 calc(var(--menu-radius)*0.7599212),
+        arc to calc(var(--menu-radius)*0.5460095) calc(var(--menu-radius)*0.1089935) of var(--menu-radius) cw,
+        curve to calc(var(--menu-radius)*1.6) 0 with calc(var(--menu-radius)*0.7599212) 0 / calc(var(--menu-radius)*0.9503585) 0,
+        close);
+      border-radius:0;clip-path:var(--smooth-contour);
+      border-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22160%22%20height%3D%22160%22%20viewBox%3D%220%200%20160%20160%22%3E%3Cpath%20d%3D%22M64%200%20L96%200%20C121.9856592%200%20129.6031504%200%20138.15962%204.359739%20A40%2040%200%200%201%20155.640261%2021.84038%20C160%2030.3968496%20160%2038.0143408%20160%2064%20L160%2096%20C160%20121.9856592%20160%20129.6031504%20155.640261%20138.15962%20A40%2040%200%200%201%20138.15962%20155.640261%20C129.6031504%20160%20121.9856592%20160%2096%20160%20L64%20160%20C38.0143408%20160%2030.3968496%20160%2021.84038%20155.640261%20A40%2040%200%200%201%204.359739%20138.15962%20C0%20129.6031504%200%20121.9856592%200%2096%20L0%2064%20C0%2038.0143408%200%2030.3968496%204.359739%2021.84038%20A40%2040%200%200%201%2021.84038%204.359739%20C30.3968496%200%2038.0143408%200%2064%200%20Z%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-opacity%3D%22.32%22%20stroke-width%3D%222.5%22%2F%3E%3C%2Fsvg%3E") 64 / var(--menu-corner) / 0 stretch
     }
-    .mobile-menu{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M40 0H60C64.8 0 82.4 0 91.2 8.8C100 17.6 100 35.2 100 40V60C100 64.8 100 82.4 91.2 91.2C82.4 100 64.8 100 60 100H40C35.2 100 17.6 100 8.8 91.2C0 82.4 0 64.8 0 60V40C0 35.2 0 17.6 8.8 8.8C17.6 0 35.2 0 40 0Z' fill='none' stroke='white' stroke-opacity='.32' stroke-width='2'/%3E%3C/svg%3E") 40 / 40px / 0 stretch}
   }
   body[data-motion='on'] .mobile-menu[open]{animation:menu-arrive .24s var(--ball-flight) both}
   @keyframes menu-arrive{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -321,5 +327,5 @@
   }
   @media(max-width:360px){:root{--gutter:14px;--gap:16px}.header nav{gap:12px;font-size:var(--type-ui)}.hero-foot>.button{width:100%}.poster{padding:20px}.poster-feature .poster-media,.poster-feature.video-card.is-open .poster-media{width:calc(100% + 40px);margin-inline:-20px}.story-heading,.qualification{padding-inline:20px}.story-copy,.portrait{padding-inline:20px}}
   @media(prefers-reduced-motion:reduce){.mobile-menu,.gallery-more>.archive-grid,.action-ball,.archive-image,.poster-media>img,.poster-media>.ambient-video,.archive-image>img,.serve-in,.media-badge svg{animation:none!important}.action-ball{display:none!important}.button svg>path{opacity:1!important}.cursor-trail{display:none!important}*{transition:none!important}.tennis-mark{transform:rotate(-18deg)!important}.button:hover{transform:none}}
-  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact svg{background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
+  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:var(--menu-radius);background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact svg{background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
 }
