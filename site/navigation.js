@@ -86,22 +86,27 @@
   const desktop = matchMedia('(min-width: 1001px)');
   const navHome = document.createComment('Navigation returns here below desktop width.');
   source.before(navHome);
-  const chinese = document.documentElement.lang.startsWith('zh');
   const panel = document.createElement('dialog');
   panel.id = 'mobile-menu';
   panel.className = 'mobile-menu';
-  panel.setAttribute('aria-labelledby', 'menu-title');
-  panel.innerHTML = `<div class="menu-head"><p id="menu-title" tabindex="-1" autofocus>${chinese ? '菜单' : 'Меню'}</p><button class="menu-close" type="button"><span>${chinese ? '关闭' : 'Закрыть'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div>`;
-  // Enter on the panel title; the first Tab reaches the close button.
+  panel.setAttribute('aria-label', trigger.textContent.trim());
+  panel.innerHTML = `<div class="menu-head"><p id="menu-title" tabindex="-1" autofocus></p><button class="menu-close" type="button" aria-label="${trigger.dataset.menuClose}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div>`;
+  // Keep the same identity as the header; the first Tab reaches the close button.
   // This avoids presenting a keyboard ring as the default touch-open state.
   const title = panel.querySelector('#menu-title');
+  title.textContent = document.querySelector('.wordmark span').textContent;
   const links = source.cloneNode(true);
   links.className = 'menu-sections';
   const language = links.querySelector('.language-link');
+  const contact = links.querySelector('[href="#contact"]');
+  const contactLabel = document.createElement('span');
+  contactLabel.textContent = trigger.dataset.menuContact;
+  contact.replaceChildren(contactLabel, contact.querySelector('svg'));
+  contact.classList.add('menu-contact');
   const foot = document.createElement('div');
   foot.className = 'menu-foot';
   const place = document.createElement('p');
-  place.textContent = chinese ? '莫斯科 · 线下训练' : 'Москва · Очные тренировки';
+  place.textContent = trigger.dataset.menuPlace;
   foot.append(place, language);
   panel.append(links, foot);
   document.body.append(panel);
@@ -121,6 +126,17 @@
     signal(true);
   });
   panel.querySelector('.menu-close').addEventListener('click', () => panel.close());
+  // Close only a completed click outside the card, not a drag that began inside.
+  let backdropPress = false;
+  function outsidePanel(event) {
+    const bounds = panel.getBoundingClientRect();
+    return event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  }
+  panel.addEventListener('pointerdown', event => { backdropPress = event.target === panel && outsidePanel(event); });
+  panel.addEventListener('click', event => {
+    if (backdropPress && event.target === panel && outsidePanel(event)) panel.close();
+    backdropPress = false;
+  });
   panel.addEventListener('keydown', event => {
     if (event.key !== 'Tab') return;
     const controls = [...panel.querySelectorAll('button,a[href]')];
