@@ -76,22 +76,46 @@
   .menu-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .menu-head p{font-size:1rem;line-height:1.25;font-weight:500;letter-spacing:-.025em}
   .menu-head p:focus{outline:none}
-  .menu-close{display:grid;place-items:center;flex:none;width:48px;min-height:48px;border-radius:50%;margin-right:-10px}
+  .menu-close{display:flex;justify-content:center;gap:0;flex:none;width:48px;min-height:48px;border-radius:50%}
   .menu-close svg{translate:none}
   .menu-close:is(:hover,:focus-visible){background:var(--nav-hover)}
   .menu-sections{display:grid;gap:4px;padding-block:28px 24px}
   .menu-sections a{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding-block:12px;font-size:clamp(1.5rem,calc(1rem + 4.5vw),3rem);font-weight:700;line-height:1.12;letter-spacing:-.045em;text-transform:uppercase;text-decoration:none}
   .menu-sections a:not(.menu-contact):is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:2px}
-  .menu-sections .menu-contact{gap:12px;min-height:60px;margin-top:24px;padding:16px 20px;border-radius:32px;background:var(--ball);color:var(--ink);font-size:1rem;font-weight:500;line-height:1.35;letter-spacing:-.015em;text-transform:none;--focus:var(--nav-text)}
-  .menu-sections .menu-contact:is(:hover,:focus-visible){background:var(--fresh)}
-  .menu-sections svg{width:24px;height:24px}
-  .menu-sections a:active,.menu-close:active{opacity:.7}
+  .menu-contact{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;margin-top:16px;padding:16px 20px;border-radius:32px;background:var(--ball);color:var(--ink);font-size:1rem;font-weight:500;line-height:1.35;letter-spacing:-.015em;text-decoration:none;--focus:var(--nav-text)}
+  .menu-contact:is(:hover,:focus-visible){background:var(--fresh)}
+  .menu-contact svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .menu-sections a:active,.menu-contact:active,.menu-close:active{opacity:.7}
   .menu-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-ui);line-height:1.45}
-  .menu-foot p{max-width:18ch}
+  .menu-foot p{min-width:0;max-width:25ch}
   .menu-foot a{display:grid;place-items:center;flex:none;min-width:48px;min-height:48px;padding:8px;border-radius:24px;text-decoration:none}
   .menu-foot a:is(:hover,:focus-visible){background:var(--nav-hover)}
   .mobile-menu :is(button,a):focus-visible{outline-width:2px;outline-offset:4px}
   .menu-sections:lang(zh) a{letter-spacing:0}
+  /* Two tangent cubic segments per corner: curvature starts at zero on the straight edge.
+     shape() also works in Safari 18.4+, where corner-shape is not yet a stable feature. */
+  @supports (clip-path:shape(from 0 0,line to 100% 0,line to 100% 100%,close)){
+    .mobile-menu,.menu-contact{
+      --corner-x:40px;--corner-y:40px;
+      --smooth-contour:shape(from var(--corner-x) 0,
+        line to calc(100% - var(--corner-x)) 0,
+        curve to calc(100% - var(--corner-x)*.22) calc(var(--corner-y)*.22) with calc(100% - var(--corner-x)*.88) 0 / calc(100% - var(--corner-x)*.44) 0,
+        curve to 100% var(--corner-y) with 100% calc(var(--corner-y)*.44) / 100% calc(var(--corner-y)*.88),
+        line to 100% calc(100% - var(--corner-y)),
+        curve to calc(100% - var(--corner-x)*.22) calc(100% - var(--corner-y)*.22) with 100% calc(100% - var(--corner-y)*.88) / 100% calc(100% - var(--corner-y)*.44),
+        curve to calc(100% - var(--corner-x)) 100% with calc(100% - var(--corner-x)*.44) 100% / calc(100% - var(--corner-x)*.88) 100%,
+        line to var(--corner-x) 100%,
+        curve to calc(var(--corner-x)*.22) calc(100% - var(--corner-y)*.22) with calc(var(--corner-x)*.88) 100% / calc(var(--corner-x)*.44) 100%,
+        curve to 0 calc(100% - var(--corner-y)) with 0 calc(100% - var(--corner-y)*.44) / 0 calc(100% - var(--corner-y)*.88),
+        line to 0 var(--corner-y),
+        curve to calc(var(--corner-x)*.22) calc(var(--corner-y)*.22) with 0 calc(var(--corner-y)*.88) / 0 calc(var(--corner-y)*.44),
+        curve to var(--corner-x) 0 with calc(var(--corner-x)*.44) 0 / calc(var(--corner-x)*.88) 0,close);
+      border-radius:0;clip-path:var(--smooth-contour)
+    }
+    .mobile-menu{border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M40 0H60C64.8 0 82.4 0 91.2 8.8C100 17.6 100 35.2 100 40V60C100 64.8 100 82.4 91.2 91.2C82.4 100 64.8 100 60 100H40C35.2 100 17.6 100 8.8 91.2C0 82.4 0 64.8 0 60V40C0 35.2 0 17.6 8.8 8.8C17.6 0 35.2 0 40 0Z' fill='none' stroke='white' stroke-opacity='.32' stroke-width='2'/%3E%3C/svg%3E") 40 / 40px / 0 stretch}
+    .menu-contact{--corner-y:30px}
+    .mobile-menu .menu-contact:focus-visible{outline-offset:-6px;border-radius:22px}
+  }
   body[data-motion='on'] .mobile-menu[open]{animation:menu-arrive .24s var(--ball-flight) both}
   @keyframes menu-arrive{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
   .hero-content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:clamp(40px,7vh,100px)}
@@ -298,5 +322,5 @@
   }
   @media(max-width:360px){:root{--gutter:14px;--gap:16px}.header nav{gap:12px;font-size:var(--type-ui)}.hero-foot>.button{width:100%}.poster{padding:20px}.poster-feature .poster-media,.poster-feature.video-card.is-open .poster-media{width:calc(100% + 40px);margin-inline:-20px}.story-heading,.qualification{padding-inline:20px}.story-copy,.portrait{padding-inline:20px}}
   @media(prefers-reduced-motion:reduce){.mobile-menu,.gallery-more>.archive-grid,.action-ball,.archive-image,.poster-media>img,.poster-media>.ambient-video,.archive-image>img,.serve-in,.media-badge svg{animation:none!important}.action-ball{display:none!important}.button svg>path{opacity:1!important}.cursor-trail{display:none!important}*{transition:none!important}.tennis-mark{transform:rotate(-18deg)!important}.button:hover{transform:none}}
-  @media(forced-colors:active){.mobile-menu{background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-sections .menu-contact{background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
+  @media(forced-colors:active){.mobile-menu{clip-path:none;border-image:none;border-radius:28px;background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.menu-contact{clip-path:none;border-radius:24px;background:ButtonFace;color:ButtonText;border:1px solid ButtonText}.grass-motion,.poster-court::after,.poster-photo::after{display:none}.hero,.poster,.gallery-more summary,.contact,.contact-court{background:Canvas;color:CanvasText}.button,.media-badge svg{border:1px solid ButtonText}}
 }

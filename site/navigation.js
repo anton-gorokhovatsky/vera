@@ -108,7 +108,7 @@
   const place = document.createElement('p');
   place.textContent = trigger.dataset.menuPlace;
   foot.append(place, language);
-  panel.append(links, foot);
+  panel.append(links, foot, contact);
   document.body.append(panel);
   document.body.classList.add('has-mobile-menu');
   trigger.hidden = false;
@@ -155,7 +155,7 @@
     } else if (mobile.matches) trigger.focus({preventScroll: true});
     else document.querySelector('.wordmark').focus({preventScroll: true});
   });
-  links.addEventListener('click', event => {
+  panel.addEventListener('click', event => {
     const link = event.target.closest('a');
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !anchorSection(link)) return;
     event.preventDefault();
