@@ -74,14 +74,14 @@
   .menu-toggle,.menu-close{align-items:center;justify-content:space-between;gap:12px;min-height:48px;border:0;background:none;color:inherit;padding:0;font-size:var(--type-ui);line-height:1.25}
   .menu-toggle svg,.menu-close svg{width:24px;height:24px;flex:none;translate:0 .1em;fill:none;stroke:currentColor;stroke-width:1.5}
   .menu-toggle:is(:hover,:focus-visible){color:var(--ball)}
-  .mobile-menu{--menu-radius:32px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
+  .mobile-menu{--menu-control-size:max(48px,calc(var(--type-ui)*2 + 20px));--menu-radius:32px;--menu-edge:max(12px,env(safe-area-inset-top));--menu-inset:clamp(20px,6vw,32px);--focus:var(--nav-text);inset:var(--menu-edge) 0 auto;margin:0 auto;width:min(calc(100% - 24px),34rem);max-width:none;height:auto;max-height:calc(100dvh - var(--menu-edge) - max(12px,env(safe-area-inset-bottom)));border:1px solid var(--nav-edge);border-radius:var(--menu-radius);background:var(--nav-solid);color:var(--nav-text);padding:var(--menu-inset);box-shadow:var(--nav-shadow);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;cursor:auto}
   .mobile-menu[open]{display:block}
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.mobile-menu{background:var(--nav-surface);-webkit-backdrop-filter:blur(24px) saturate(1.1);backdrop-filter:blur(24px) saturate(1.1)}}
   .mobile-menu::backdrop{background:rgb(5 24 12 / .18)}
   .menu-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .menu-head p{font-size:1rem;line-height:1.25;font-weight:500;letter-spacing:-.025em}
   .menu-head p:focus{outline:none}
-  .menu-close{display:flex;justify-content:center;gap:0;flex:none;width:48px;min-height:48px;border-radius:50%}
+  .menu-close{display:flex;justify-content:center;gap:0;flex:none;width:var(--menu-control-size);min-height:var(--menu-control-size);border-radius:50%}
   .menu-close svg{translate:none}
   .menu-close:is(:hover,:focus-visible){background:var(--nav-hover)}
   .menu-sections{display:grid;padding-block:20px 16px}
@@ -89,12 +89,12 @@
   .menu-sections a:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:2px}
   .menu-sections .menu-contact{display:flow-root;line-height:max(1.15em,36px);text-wrap:wrap}
   .menu-contact span{overflow-wrap:anywhere}
-  .menu-contact svg{float:inline-end;width:36px;height:36px;margin-inline-start:12px;padding:8px;border-radius:50%;background:var(--ball);color:var(--ink);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .menu-contact svg{float:inline-end;width:36px;height:36px;margin-inline:12px calc((var(--menu-control-size) - 36px)/2);padding:8px;border-radius:50%;background:var(--ball);color:var(--ink);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .menu-contact:is(:hover,:focus-visible) svg{background:var(--fresh)}
   .menu-sections a:active,.menu-close:active{opacity:.7}
   .menu-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-ui);line-height:1.45}
   .menu-foot p{min-width:0;max-width:25ch}
-  .menu-foot a{display:grid;place-items:center;flex:none;min-width:48px;min-height:48px;padding:8px;border-radius:24px;text-decoration:none}
+  .menu-foot a{display:grid;place-items:center;flex:none;width:var(--menu-control-size);min-height:var(--menu-control-size);padding:8px;border-radius:24px;text-decoration:none}
   .menu-foot a:is(:hover,:focus-visible){background:var(--nav-hover)}
   .mobile-menu :is(button,a):focus-visible{outline-width:2px;outline-offset:4px}
   .menu-sections:lang(zh) a{letter-spacing:0}
