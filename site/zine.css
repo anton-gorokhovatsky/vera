@@ -1,11 +1,11 @@
 /* The selected photographic spread shares the site's paper, type and court axes. */
 @layer components{
-  .gallery-zine{--focus:var(--purple);--zine-title:clamp(2.75rem,13vw,12rem);--zine-feature:clamp(1.875rem,5.7vw,5.5rem);--zine-invite:clamp(3rem,5vw,5.5rem);background:var(--paper);color:var(--petunia)}
+  .gallery-zine{--focus:var(--purple);--zine-title:clamp(2.75rem,calc(1.1rem + 8.8vw),10rem);--zine-feature:clamp(1.875rem,5.7vw,5.5rem);--zine-invite:clamp(3rem,5vw,5.5rem);--zine-aside:clamp(2rem,3.6vw,3.5rem);background:var(--paper);color:var(--petunia)}
   @supports(font-size:calc(100vw / 1000px * 1rem)){
-    .gallery-zine{--zine-title:clamp(2.75rem,calc(100vw / 1000px * 8.125rem),12rem);--zine-feature:clamp(1.875rem,calc(100vw / 1000px * 3.5625rem),5.5rem);--zine-invite:clamp(3rem,calc(100vw / 1000px * 3.125rem),5.5rem)}
+    .gallery-zine{--zine-title:clamp(2.75rem,calc(100vw / 1000px * 5.5rem + 1.1rem),10rem);--zine-feature:clamp(1.875rem,calc(100vw / 1000px * 3.5625rem),5.5rem);--zine-invite:clamp(3rem,calc(100vw / 1000px * 3.125rem),5.5rem);--zine-aside:clamp(2rem,calc(100vw / 1000px * 2.25rem),3.5rem)}
   }
   .gallery-zine>.wrap{container:zine / inline-size}
-  .zine-heading{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--gap);align-items:end;border-bottom:2px solid currentColor;padding-bottom:32px;margin-bottom:clamp(32px,4vw,64px)}
+  .zine-heading{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--gap);align-items:end;border-bottom:2px solid currentColor;padding-bottom:24px;margin-bottom:clamp(24px,2.5vw,40px)}
   .zine-heading h2{font:italic 400 var(--zine-title)/1.05 var(--serif);letter-spacing:-.055em;hyphens:manual}
   .zine-intro{max-width:31ch;justify-self:end;line-height:1.6}
   .zine-intro .motion-toggle{color:var(--petunia);margin-top:12px}
@@ -41,7 +41,7 @@
   .zine-photo-frame{position:relative}
   .zine-photo-frame>img{display:block;width:100%;height:auto}
   .zine-rally{grid-column:6/9;grid-row:2;margin-top:clamp(64px,10vw,150px)}
-  .zine-invitation{grid-column:9/13;grid-row:2;align-self:center;display:flex;flex-direction:column;gap:32px;margin-top:48px;padding:clamp(24px,3vw,48px);background:var(--petunia);color:var(--cream);--focus:var(--ball);text-decoration:none}
+  .zine-invitation{--zine-invite:var(--zine-aside);grid-column:10/13;grid-row:2;align-self:end;display:flex;flex-direction:column;gap:24px;margin:0;padding:clamp(24px,2.5vw,40px);background:var(--petunia);color:var(--cream);--focus:var(--ball);text-decoration:none}
   .zine-invitation-title{font:italic 400 var(--zine-invite)/1 var(--serif);letter-spacing:-.035em;hyphens:manual;max-width:100%}
   .zine-invitation-action{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:var(--type-ui);line-height:1.4}
   .zine-invitation-action svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5}
@@ -53,6 +53,7 @@
   .gallery-zine .archive-card.media-link:is(:hover,:focus-within) .archive-image{outline-color:var(--purple)}
   .gallery-zine+.story{padding-top:0}
   .zine-word{display:inline-block;white-space:nowrap}
+  .zine-phrase{display:inline-block;max-width:100%;vertical-align:top}
   .gallery-zine:lang(zh) :is(.zine-heading h2,.zine-invitation-title){font-family:var(--font);font-style:normal;font-weight:700;letter-spacing:-.035em;line-height:1.15}
   .gallery-zine:lang(zh) .zine-feature-title{letter-spacing:-.035em;line-height:1.15}
 }
@@ -66,7 +67,7 @@
     .zine-serve{grid-column:1/4;grid-row:2;padding-top:24px}
     .zine-photo{grid-column:4/7;grid-row:2;margin:80px 0 0 8px}
     .zine-rally{grid-column:2/6;grid-row:3;margin-top:24px}
-    .zine-invitation{grid-column:1/-1;grid-row:4;margin:16px 0 0;padding:28px;gap:24px}
+    .zine-invitation{--zine-invite:inherit;grid-column:1/-1;grid-row:4;margin:16px 0 0;padding:28px;gap:24px}
     .gallery-play{left:12px;bottom:12px;padding:10px 12px;gap:8px;max-width:calc(100% - 24px)}
     .zine-serve .gallery-play{left:8px;bottom:8px;max-width:calc(100% - 16px)}
     .gallery-zine .gallery-more{margin-top:32px}
