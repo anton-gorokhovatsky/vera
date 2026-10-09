@@ -259,6 +259,7 @@
   .footer-emblem{width:clamp(44px,5vw,72px);justify-self:center;height:auto;transform:rotate(-32deg)}
   .footer-links{display:flex;flex-direction:column;align-items:center;gap:4px}
   .footer a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none}.footer a:hover{text-decoration:underline}
+  .footer .language-link{min-width:44px;justify-content:center}
   .moscow-live{justify-self:start;line-height:1.9;font-variant-numeric:tabular-nums}.weather-reading{display:block;font-size:var(--type-meta)}.weather-symbol{color:var(--ball)}
   .footer-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 20px;font-size:var(--type-meta);color:var(--muted);padding-block:12px}.footer-bottom .motion-toggle{font-size:var(--type-meta)}
   .ball-pointer{position:fixed;left:0;top:0;width:18px;height:18px;pointer-events:none;z-index:31;display:none;will-change:transform}.has-ball-pointer[data-motion='on'] .ball-pointer{display:block}.ball-pointer svg{width:100%;height:100%;transform:rotate(-32deg)}
@@ -267,7 +268,12 @@
   .poster.video-card.is-open .poster-media{position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;margin:0;z-index:5}.poster.video-card.is-open .poster-media>img,.poster.video-card.is-open .ambient-video{display:none}.poster.video-card.is-open .inline-video{object-fit:contain}.video-card.is-open .poster-top,.video-card.is-open h3,.video-card.is-open .poster-bottom{visibility:hidden}
   .poster-feature.video-card.is-open .poster-media{position:relative;inset:auto;aspect-ratio:16/9;height:auto}
   .poster-feature.video-card.is-open :is(.poster-top,h3,.poster-bottom){visibility:visible}
-  .inline-error{position:absolute;inset:0;z-index:6;display:grid;place-content:center;padding:20px;background:var(--field);font-size:.85rem}.inline-error a{min-height:44px}
+  .inline-error{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:12px;overflow:auto;padding:20px;background:var(--field);color:var(--cream);--focus:var(--ball);font-size:var(--type-ui);text-align:center}
+  .inline-error-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;flex-shrink:0}
+  .inline-error button{min-width:44px;min-height:44px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;line-height:1.4}
+  .inline-error .inline-retry{background:var(--cream);color:var(--ink);border-color:transparent}
+  .inline-error button:is(:hover,:focus-visible){background:var(--ball);color:var(--ink);border-color:transparent}
+  .poster-feature.video-card.is-open .poster-media.has-inline-error{min-height:12rem}
   @media(hover:hover) and (pointer:fine){body[data-motion='on'].has-ball-pointer{cursor:none}body[data-motion='on'] :is(a,button,summary){cursor:pointer}body[data-motion='on'] :is(video){cursor:auto}}
   .text-link svg{transition:transform .3s var(--ball-flight)}.text-link:is(:hover,:focus-visible) svg{transform:translate(2px,-2px)}
   .action-ball{opacity:0;fill:currentColor;stroke:none}.button svg>path{transition:opacity .15s}.button svg{overflow:visible}

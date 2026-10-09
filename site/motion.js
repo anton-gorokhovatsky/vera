@@ -22,7 +22,6 @@ function renderMotion() {
   if (!enabled || viewerOpen || menuOpen || inlinePlaying) document.body.classList.remove('has-ball-pointer');
   buttons.forEach(button => {
     button.dataset.playing = String(enabled);
-    button.setAttribute('aria-pressed', String(enabled));
     button.querySelector('span').textContent = enabled ? (zhMotion ? '暂停动态效果' : 'Остановить движение') : (zhMotion ? '开启动效' : 'Включить движение');
   });
   videos.forEach(video => {

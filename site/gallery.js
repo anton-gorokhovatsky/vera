@@ -27,6 +27,7 @@ allCards.filter(card => card.dataset.kind === 'video').forEach(link => {
   button.addEventListener('click', event => {
     if (!video) {
       video = document.createElement('video');
+      const player = video;
       video.className = 'inline-video';
       video.controls = true;
       video.playsInline = true;
@@ -35,17 +36,58 @@ allCards.filter(card => card.dataset.kind === 'video').forEach(link => {
       video.setAttribute('aria-label', link.dataset.title);
       video.src = link.dataset.inlineSrc || link.href;
       inlineVideos.add(video);
-      video.addEventListener('play', () => { pauseInline(video); notifyPlayback(); });
+      video.addEventListener('play', () => { pauseInline(player); notifyPlayback(); });
       ['pause','ended'].forEach(type => video.addEventListener(type, notifyPlayback));
       video.addEventListener('error', () => {
-        if (frame.querySelector('.inline-error')) return;
+        if (player !== video || frame.querySelector('.inline-error')) return;
+        const hadFocus = card.contains(document.activeElement);
+        player.pause();
+        player.hidden = true;
         const error = document.createElement('div');
         error.className = 'inline-error';
-        const fallback = document.createElement('a');
-        fallback.href = link.href;
-        fallback.textContent = zh ? '打开视频文件' : 'Открыть видеофайл';
-        error.append(fallback);
+        const message = document.createElement('p');
+        message.id = `media-error-${link.dataset.mediaId}`;
+        message.setAttribute('role', 'alert');
+        message.textContent = zh ? '视频加载失败。' : 'Не удалось загрузить видео.';
+        const actions = document.createElement('div');
+        actions.className = 'inline-error-actions';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'inline-retry';
+        retry.textContent = zh ? '重试' : 'Повторить';
+        retry.setAttribute('aria-describedby', message.id);
+        const back = document.createElement('button');
+        back.type = 'button';
+        back.textContent = zh ? '返回' : 'Назад';
+        const clearError = () => {
+          error.remove();
+          frame.classList.remove('has-inline-error');
+        };
+        retry.addEventListener('click', () => {
+          clearError();
+          player.hidden = false;
+          player.load();
+          player.focus({preventScroll:true});
+          player.play().catch(() => {});
+        });
+        back.addEventListener('click', () => {
+          video = null;
+          inlineVideos.delete(player);
+          playbackObserver?.unobserve(card);
+          player.pause();
+          player.removeAttribute('src');
+          player.load();
+          player.remove();
+          clearError();
+          card.classList.remove('is-open');
+          button.focus({preventScroll:true});
+          notifyPlayback();
+        });
+        actions.append(retry, back);
+        error.append(message, actions);
+        frame.classList.add('has-inline-error');
         frame.append(error);
+        if (hadFocus) retry.focus({preventScroll:true});
         notifyPlayback();
       });
       frame.append(video);
