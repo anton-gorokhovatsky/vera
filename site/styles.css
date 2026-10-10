@@ -268,6 +268,7 @@
   .contact h2{font-size:var(--type-contact);text-transform:uppercase;line-height:1;letter-spacing:-.06em;margin-block:clamp(32px,5vw,80px) 0;color:var(--cream);hyphens:manual;overflow-wrap:normal}
   .contact-copy{grid-column:2;max-width:none;font-size:var(--type-contact-copy);line-height:1.6;padding:var(--court-inset);margin:0;border-right:1px solid var(--line)}
   .contact-action{grid-column:3;padding:var(--court-inset);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-width:0}.contact .button{background:var(--cream);color:var(--ink);font-size:var(--type-ui);padding:1rem 1.2rem;gap:1rem}.contact .button:is(:hover,:focus-visible){background:var(--ball)}
+  .contact-instruction{max-width:36ch;margin-top:16px;font-size:var(--type-ui);line-height:1.6}
   .footer{background:var(--field);padding-bottom:12px}
   .footer-meta{position:relative;display:grid;grid-template-columns:minmax(20px,1fr) minmax(0,3fr) minmax(0,3fr) minmax(20px,1fr);align-items:center;font-size:var(--type-ui);padding-block:28px;border:1px solid var(--line);border-top:0}
   .footer-meta::before,.footer-meta::after{content:'';position:absolute;top:0;bottom:0;width:1px;background:var(--line);pointer-events:none}.footer-meta::before{left:12.5%}.footer-meta::after{right:12.5%}
