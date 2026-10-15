@@ -14,8 +14,8 @@ let galleryBytes = 0;
 const mediaIds = [];
 const mediaKinds = [];
 // The shared author credit is an explicit project dependency, pinned with SRI.
-const authorSignatureScript = '<script type="module" src="https://gorokhovatsky.tech/signature/1.0.2/signature.js" integrity="sha384-vUxWddiZitUvyowHRJrXIsCsbzPGPLNhs/h382aT0X/EPU39rAxy5KNTOzGlZXlK" crossorigin="anonymous"></script>';
-const authorSignatureBytes = 45_076;
+const authorSignatureScript = '<script type="module" src="https://gorokhovatsky.tech/signature/1.0.5/signature.js" integrity="sha384-+IwK3+REwwOiopQv207/3TYnvEnyJ+ddDyeFYhNj+ZOL7n6cW8Y5CCuz5bqPbY55" crossorigin="anonymous"></script>';
+const authorSignatureBytes = 46_932;
 
 async function inspect(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
