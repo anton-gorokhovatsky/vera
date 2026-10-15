@@ -13,6 +13,9 @@ let coreBytes = 0;
 let galleryBytes = 0;
 const mediaIds = [];
 const mediaKinds = [];
+// The shared author credit is an explicit project dependency, pinned with SRI.
+const authorSignatureScript = '<script type="module" src="https://gorokhovatsky.tech/signature/1.0.2/signature.js" integrity="sha384-vUxWddiZitUvyowHRJrXIsCsbzPGPLNhs/h382aT0X/EPU39rAxy5KNTOzGlZXlK" crossorigin="anonymous"></script>';
+const authorSignatureBytes = 45_076;
 
 async function inspect(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -39,7 +42,7 @@ async function inspect(directory) {
     check(/<meta name="robots" content="noindex, nofollow">/.test(html), `${name}: preview must remain noindex until launch`);
     check(!/<(?:iframe|form)\b/i.test(html), `${name}: unexpected embed or data collection`);
     for (const match of html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)) {
-      check(/^<script (?:src="\.{1,2}\/(?:motion|gallery|navigation)\.js\?v=[\w-]+" defer|type="module" src="\.{1,2}\/weather\.js\?v=[\w-]+")><\/script>$/.test(match[0]), `${name}: only local motion, gallery, navigation and weather scripts are allowed`);
+      check(/^<script (?:src="\.{1,2}\/(?:motion|gallery|navigation)\.js\?v=[\w-]+" defer|type="module" src="\.{1,2}\/weather\.js\?v=[\w-]+")><\/script>$/.test(match[0]) || match[0] === authorSignatureScript, `${name}: only local site scripts and the pinned shared author signature are allowed`);
     }
     check(!/lorem ipsum|TODO|TBD|example\.com|ваш текст/i.test(html), `${name}: unfinished content`);
 
@@ -88,7 +91,7 @@ async function inspect(directory) {
 }
 
 await inspect(root);
-check(coreBytes < 1_600_000, `Core site exceeds 1.6 MB including the optional grass video: ${coreBytes} bytes`);
+check(coreBytes + authorSignatureBytes < 1_600_000, `Core site exceeds 1.6 MB including the optional grass video and shared author signature: ${coreBytes + authorSignatureBytes} bytes`);
 check(galleryBytes < 30_000_000, `On-demand gallery exceeds 30 MB: ${galleryBytes} bytes`);
 check(mediaIds.length === 46 && new Set(mediaIds).size === 46, 'Both languages must expose all 23 unique materials');
 check(mediaKinds.filter(kind => kind === 'video').length === 24 && mediaKinds.filter(kind => kind === 'image').length === 22, 'Both galleries must contain 12 videos and 11 images');
@@ -96,6 +99,6 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Static checks passed: ${htmlCount} pages, ${imageCount} images, ${Math.round(coreBytes / 1024)} KB core, ${Math.round(galleryBytes / 1024)} KB on-demand gallery (${mediaIds.length} materials).`);
+  console.log(`Static checks passed: ${htmlCount} pages, ${imageCount} images, ${Math.round((coreBytes + authorSignatureBytes) / 1024)} KB core including shared signature, ${Math.round(galleryBytes / 1024)} KB on-demand gallery (${mediaIds.length} materials).`);
   console.log('Checked metadata, preview indexing, local resources, anchors, image descriptions and dimensions, asset budget. Browser review is separate.');
 }

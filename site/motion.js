@@ -19,6 +19,9 @@ function shouldPlay(video) {
 function renderMotion() {
   document.body.dataset.motion = enabled ? 'on' : 'off';
   document.body.dataset.active = String(!document.hidden && !viewerOpen && !menuOpen && !inlinePlaying);
+  document.querySelectorAll('ag-signature').forEach(signature => {
+    signature.toggleAttribute('paused', !enabled || document.hidden || viewerOpen || menuOpen || inlinePlaying);
+  });
   if (!enabled || viewerOpen || menuOpen || inlinePlaying) document.body.classList.remove('has-ball-pointer');
   buttons.forEach(button => {
     button.dataset.playing = String(enabled);
@@ -66,7 +69,7 @@ renderMotion();
 
 // One flight path owns both the ball and its exposure trail.
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-const interactiveTarget = target => target instanceof Element && target.closest('a,button,summary,input,textarea,select,video,[role="button"],[contenteditable="true"]');
+const interactiveTarget = target => target instanceof Element && target.closest('a,button,summary,input,textarea,select,video,ag-signature,[role="button"],[contenteditable="true"]');
 const trail = document.createElement('canvas');
 trail.className = 'cursor-trail';
 trail.setAttribute('aria-hidden', 'true');
